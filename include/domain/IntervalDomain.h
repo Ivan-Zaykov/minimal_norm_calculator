@@ -1,5 +1,5 @@
 #pragma once
-#include "Domain.h"
+#include "domain/Domain.h"
 
 class IntervalDomain : public Domain {
 public:
@@ -10,4 +10,3 @@ public:
 private:
     double a_, b_;
 };
-

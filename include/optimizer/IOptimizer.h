@@ -1,8 +1,8 @@
 #pragma once
 #include "Vector.h"
-#include "Domain.h"
-#include "IInitializer.h"
-#include "IBasis.h"
+#include "domain/Domain.h"
+#include "initializer/IInitializer.h"
+#include "basis/IBasis.h"
 #include <vector>
 
 class IOptimizer {
@@ -11,4 +11,3 @@ public:
     // возвращает оптимальные узлы (как векторы координат)
     virtual std::vector<Vector> optimize(const Domain& domain, int degree, const IInitializer& initializer) = 0;
 };
-

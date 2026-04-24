@@ -1,6 +1,6 @@
 #pragma once
-#include "IOptimizer.h"
-#include "INormCalculator.h"
+#include "optimizer/IOptimizer.h"
+#include "calculator/INormCalculator.h"
 #include <memory>
 
 class NelderMeadOptimizer : public IOptimizer {
@@ -12,4 +12,3 @@ private:
     int maxIter_;
     std::unique_ptr<INormCalculator> normCalc_;
 };
-

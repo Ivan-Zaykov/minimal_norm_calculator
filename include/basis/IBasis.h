@@ -9,4 +9,3 @@ public:
     virtual double value(int i, const Vector& x) const = 0;
     virtual Vector gradient(int i, const Vector& x) const = 0; // может быть не реализовано
 };
-

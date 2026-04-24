@@ -1,8 +1,7 @@
 #pragma once
-#include "IInitializer.h"
+#include "initializer/IInitializer.h"
 
-class UniformInitializer : public IInitializer {
+class RandomInitializer : public IInitializer {
 public:
     std::vector<Vector> generate(const Domain& domain, int numNodes) const override;
 };
-

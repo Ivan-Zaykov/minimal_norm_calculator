@@ -1,5 +1,5 @@
 #pragma once
-#include "Domain.h"
+#include "domain/Domain.h"
 #include <vector>
 
 class HypercubeDomain : public Domain {
@@ -12,4 +12,3 @@ private:
     int dim_;
     double left_, right_;
 };
-

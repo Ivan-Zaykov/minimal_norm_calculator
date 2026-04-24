@@ -1,5 +1,5 @@
 #pragma once
-#include "Domain.h"
+#include "domain/Domain.h"
 #include <vector>
 
 class SimplexDomain : public Domain {
@@ -11,4 +11,3 @@ public:
 private:
     std::vector<Vector> vertices_;
 };
-

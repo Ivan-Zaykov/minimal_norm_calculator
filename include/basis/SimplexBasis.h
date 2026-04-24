@@ -1,5 +1,5 @@
 #pragma once
-#include "IBasis.h"
+#include "basis/IBasis.h"
 #include "Vector.h"
 #include <vector>
 
@@ -14,4 +14,3 @@ private:
     int n_; // размерность пространства
     std::vector<Vector> barycentricCoeffs; // для вычисления lambda_i(x)
 };
-
