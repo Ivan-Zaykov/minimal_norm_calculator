@@ -1,4 +1,4 @@
-#include "IntervalDomain.h"
+#include "domain/IntervalDomain.h"
 #include <cmath>
 
 IntervalDomain::IntervalDomain(double a, double b) : a_(a), b_(b) {}
@@ -16,4 +16,3 @@ std::vector<Vector> IntervalDomain::samplePoints(int numPoints) const {
     }
     return points;
 }
-

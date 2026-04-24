@@ -1,9 +1,9 @@
-#include "LagrangeBasis.h"
-#include "DiscreteNormCalculator.h"
-#include "UniformInitializer.h"
-#include "ChebyshevInitializer.h"
-#include "IntervalDomain.h"
-#include "NelderMeadOptimizer.h"
+#include "basis/LagrangeBasis.h"
+#include "calculator/DiscreteNormCalculator.h"
+#include "initializer/UniformInitializer.h"
+#include "initializer/ChebyshevInitializer.h"
+#include "domain/IntervalDomain.h"
+#include "optimizer/NelderMeadOptimizer.h"
 #include <iostream>
 
 int main() {
@@ -38,4 +38,3 @@ int main() {
 
     return 0;
 }
-

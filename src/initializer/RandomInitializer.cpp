@@ -1,4 +1,4 @@
-#include "RandomInitializer.h"
+#include "initializer/RandomInitializer.h"
 #include <random>
 #include <cmath>
 
@@ -19,4 +19,3 @@ std::vector<Vector> RandomInitializer::generate(const Domain& domain, int numNod
     }
     return nodes;
 }
-

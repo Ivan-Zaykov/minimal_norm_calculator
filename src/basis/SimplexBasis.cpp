@@ -1,4 +1,4 @@
-#include "SimplexBasis.h"
+#include "basis/SimplexBasis.h"
 #include <Eigen/Dense>
 #include <stdexcept>
 
@@ -40,4 +40,3 @@ Vector SimplexBasis::gradient(int i, const Vector& x) const {
     for (int d = 0; d < n_; ++d) grad[d] = barycentricCoeffs[i][d];
     return grad;
 }
-

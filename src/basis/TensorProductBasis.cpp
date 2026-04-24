@@ -1,4 +1,4 @@
-#include "TensorProductBasis.h"
+#include "basis/TensorProductBasis.h"
 #include <stdexcept>
 #include <cmath>
 
@@ -59,4 +59,3 @@ Vector TensorProductBasis::gradient(int i, const Vector& x) const {
     }
     return grad;
 }
-

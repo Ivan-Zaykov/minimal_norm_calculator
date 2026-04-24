@@ -1,4 +1,4 @@
-#include "UniformInitializer.h"
+#include "initializer/UniformInitializer.h"
 #include <cmath>
 
 std::vector<Vector> UniformInitializer::generate(const Domain& domain, int numNodes) const {
@@ -28,4 +28,3 @@ std::vector<Vector> UniformInitializer::generate(const Domain& domain, int numNo
     }
     return nodes;
 }
-

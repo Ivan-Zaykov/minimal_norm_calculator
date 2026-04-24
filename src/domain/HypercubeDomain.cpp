@@ -1,4 +1,4 @@
-#include "HypercubeDomain.h"
+#include "domain/HypercubeDomain.h"
 #include <cmath>
 
 HypercubeDomain::HypercubeDomain(int dim, double left, double right) : dim_(dim), left_(left), right_(right) {}
@@ -30,4 +30,3 @@ std::vector<Vector> HypercubeDomain::samplePoints(int numPoints) const {
     }
     return pts;
 }
-

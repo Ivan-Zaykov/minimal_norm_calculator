@@ -1,4 +1,4 @@
-#include "LagrangeBasis.h"
+#include "basis/LagrangeBasis.h"
 #include <stdexcept>
 #include <cmath>
 
@@ -25,4 +25,3 @@ Vector LagrangeBasis::gradient(int i, const Vector& x) const {
     grad[0] = (value(i, xp) - value(i, xm)) / (2*eps);
     return grad;
 }
-

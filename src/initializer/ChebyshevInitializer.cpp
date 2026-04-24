@@ -1,4 +1,4 @@
-#include "ChebyshevInitializer.h"
+#include "initializer/ChebyshevInitializer.h"
 #include <cmath>
 
 std::vector<Vector> ChebyshevInitializer::generate(const Domain& domain, int numNodes) const {
@@ -40,4 +40,3 @@ std::vector<Vector> ChebyshevInitializer::generate(const Domain& domain, int num
     }
     return nodes;
 }
-

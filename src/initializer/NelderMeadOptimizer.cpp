@@ -1,6 +1,6 @@
-#include "NelderMeadOptimizer.h"
-#include "DiscreteNormCalculator.h"
-#include "LagrangeBasis.h"
+#include "optimizer/NelderMeadOptimizer.h"
+#include "calculator/DiscreteNormCalculator.h"
+#include "basis/LagrangeBasis.h"
 #include <cmath>
 #include <iostream>
 
@@ -17,4 +17,3 @@ std::vector<Vector> NelderMeadOptimizer::optimize(const Domain& domain, int degr
     std::cout << "NelderMeadOptimizer: optimization not fully implemented, returning initial nodes.\n";
     return nodes;
 }
-

@@ -1,4 +1,4 @@
-#include "SimplexDomain.h"
+#include "domain/SimplexDomain.h"
 #include <Eigen/Dense>
 #include <cmath>
 #include <random>
@@ -51,4 +51,3 @@ std::vector<Vector> SimplexDomain::samplePoints(int numPoints) const {
     }
     return pts;
 }
-
