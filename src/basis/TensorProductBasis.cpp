@@ -13,7 +13,9 @@ TensorProductBasis::TensorProductBasis(const std::vector<std::vector<double>>& g
         stride *= grids[d].size();
     }
 }
+
 int TensorProductBasis::size() const { return totalSize_; }
+
 double TensorProductBasis::lagrange1D(double x, const std::vector<double>& nodes, int idx) const {
     double res = 1.0;
     for (size_t j = 0; j < nodes.size(); ++j) {
@@ -22,11 +24,13 @@ double TensorProductBasis::lagrange1D(double x, const std::vector<double>& nodes
     }
     return res;
 }
+
 double TensorProductBasis::dlagrange1D(double x, const std::vector<double>& nodes, int idx) const {
     // численное дифференцирование
     double eps = 1e-8;
     return (lagrange1D(x+eps, nodes, idx) - lagrange1D(x-eps, nodes, idx)) / (2*eps);
 }
+
 double TensorProductBasis::value(int i, const Vector& x) const {
     if (x.size() != (size_t)dim_) throw std::runtime_error("Dimension mismatch");
     double prod = 1.0;
@@ -38,6 +42,7 @@ double TensorProductBasis::value(int i, const Vector& x) const {
     }
     return prod;
 }
+
 Vector TensorProductBasis::gradient(int i, const Vector& x) const {
     Vector grad(dim_);
     int rem = i;

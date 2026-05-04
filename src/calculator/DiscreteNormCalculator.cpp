@@ -3,6 +3,7 @@
 #include <cmath>
 
 DiscreteNormCalculator::DiscreteNormCalculator(int numSamplePoints) : numSamplePoints_(numSamplePoints) {}
+
 double DiscreteNormCalculator::computeNorm(const IBasis& basis, const Domain& domain) {
     auto samplePoints = domain.samplePoints(numSamplePoints_);
     double maxSum = 0.0;

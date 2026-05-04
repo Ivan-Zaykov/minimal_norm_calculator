@@ -2,11 +2,13 @@
 #include <cmath>
 
 HypercubeDomain::HypercubeDomain(int dim, double left, double right) : dim_(dim), left_(left), right_(right) {}
+
 bool HypercubeDomain::contains(const Vector& p) const {
     if (p.size() != (size_t)dim_) return false;
     for (double v : p) if (v < left_ || v > right_) return false;
     return true;
 }
+
 std::vector<Vector> HypercubeDomain::samplePoints(int numPoints) const {
     // равномерная сетка в dim_ мерном кубе, всего numPoints^(1/dim) точек по каждому направлению
     int perDim = static_cast<int>(std::pow(numPoints, 1.0/dim_));

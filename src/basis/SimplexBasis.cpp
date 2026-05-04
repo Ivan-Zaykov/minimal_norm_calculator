@@ -5,8 +5,6 @@
 SimplexBasis::SimplexBasis(const std::vector<Vector>& vertices) : vertices_(vertices) {
     n_ = vertices.size() - 1;
     if (n_ < 1) throw std::runtime_error("Need at least 2 vertices");
-    // Построить матрицу A и вычислить коэффициенты для барицентрических координат
-    // A * lambda = [x; 1] ?
     Eigen::MatrixXd A(n_+1, n_+1);
     for (int j = 0; j <= n_; ++j) {
         for (int i = 0; i < n_; ++i) {
@@ -14,7 +12,7 @@ SimplexBasis::SimplexBasis(const std::vector<Vector>& vertices) : vertices_(vert
         }
         A(n_, j) = 1.0;
     }
-    // сохраним A_inv для быстрого вычисления lambda
+
     barycentricCoeffs.resize(n_+1, Vector(n_+1));
     Eigen::MatrixXd Ainv = A.inverse();
     for (int j = 0; j <= n_; ++j) {
@@ -23,7 +21,9 @@ SimplexBasis::SimplexBasis(const std::vector<Vector>& vertices) : vertices_(vert
         }
     }
 }
+
 int SimplexBasis::size() const { return n_+1; }
+
 double SimplexBasis::value(int i, const Vector& x) const {
     // lambda_i(x) = (A^{-1} * [x;1])_i
     if (x.size() != (size_t)n_) throw std::runtime_error("Dimension mismatch");
@@ -34,6 +34,7 @@ double SimplexBasis::value(int i, const Vector& x) const {
     for (int k = 0; k <= n_; ++k) res += barycentricCoeffs[i][k] * aug(k);
     return res;
 }
+
 Vector SimplexBasis::gradient(int i, const Vector& x) const {
     // Для линейных барицентрических координат градиент постоянен
     Vector grad(n_);

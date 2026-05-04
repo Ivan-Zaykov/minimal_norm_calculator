@@ -4,6 +4,7 @@
 #include <random>
 
 SimplexDomain::SimplexDomain(const std::vector<Vector>& vertices) : vertices_(vertices) {}
+
 bool SimplexDomain::contains(const Vector& p) const {
     // используем барицентрические координаты: все >=0
     int n = vertices_.size() - 1;
@@ -24,6 +25,7 @@ bool SimplexDomain::contains(const Vector& p) const {
     }
     return (sum >= -1e-12);
 }
+
 std::vector<Vector> SimplexDomain::samplePoints(int numPoints) const {
     // случайные точки внутри симплекса методом отражения
     int dim = vertices_.size() - 1;
