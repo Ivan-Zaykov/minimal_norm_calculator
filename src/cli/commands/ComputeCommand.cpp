@@ -1,5 +1,5 @@
 #include "cli/commands/ComputeCommand.h"
-#include "basis/LagrangeBasis.h"
+#include "basis/LagrangeBasis1D.h"
 #include "basis/TensorProductBasis.h"
 #include "calculator/DiscreteNormCalculator.h"
 #include "initializer/UniformInitializer.h"
@@ -32,7 +32,7 @@ void ComputeCommand::computeUniform(const ProgramOptions& opts) const {
         auto nodes = init.generate(domain, numNodes);
         std::vector<double> nodeVals;
         for (const auto& v : nodes) nodeVals.push_back(v[0]);
-        LagrangeBasis basis(nodeVals);
+        LagrangeBasis1D basis(nodeVals);
         DiscreteNormCalculator calc(opts.numSamples);
         double lebesgue = calc.computeNorm(basis, domain);
         std::cout << "Lebesgue constant (uniform, degree " << opts.degree << "): " << lebesgue << std::endl;
@@ -47,7 +47,7 @@ void ComputeCommand::computeChebyshev(const ProgramOptions& opts) const {
         auto nodes = init.generate(domain, numNodes);
         std::vector<double> nodeVals;
         for (const auto& v : nodes) nodeVals.push_back(v[0]);
-        LagrangeBasis basis(nodeVals);
+        LagrangeBasis1D basis(nodeVals);
         DiscreteNormCalculator calc(opts.numSamples);
         double lebesgue = calc.computeNorm(basis, domain);
         std::cout << "Lebesgue constant (Chebyshev, degree " << opts.degree << "): " << lebesgue << std::endl;
@@ -73,7 +73,7 @@ void ComputeCommand::computeFromFile(const ProgramOptions& opts, const std::stri
     }
 
     IntervalDomain domain(0.0, 1.0);
-    LagrangeBasis basis(nodes);
+    LagrangeBasis1D basis(nodes);
     DiscreteNormCalculator calc(opts.numSamples);
     double lebesgue = calc.computeNorm(basis, domain);
     std::cout << "Lebesgue constant (from file, " << nodes.size() << " nodes): " << lebesgue << std::endl;

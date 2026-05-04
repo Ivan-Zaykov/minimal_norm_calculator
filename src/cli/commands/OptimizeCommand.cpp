@@ -1,5 +1,5 @@
 #include "cli/commands/OptimizeCommand.h"
-#include "basis/LagrangeBasis.h"
+#include "basis/LagrangeBasis1D.h"
 #include "calculator/DiscreteNormCalculator.h"
 #include "initializer/UniformInitializer.h"
 #include "domain/IntervalDomain.h"

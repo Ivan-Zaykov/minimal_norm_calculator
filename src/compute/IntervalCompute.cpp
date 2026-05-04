@@ -1,5 +1,5 @@
 #include "compute/IntervalCompute.h"
-#include "basis/LagrangeBasis.h"
+#include "basis/LagrangeBasis1D.h"
 #include "calculator/DiscreteNormCalculator.h"
 #include "initializer/UniformInitializer.h"
 #include "initializer/ChebyshevInitializer.h"
@@ -16,7 +16,7 @@ void computeForInterval(int degree, int numSamples) {
         auto nodes = init.generate(domain, numNodes);
         std::vector<double> nodeVals;
         for (const auto& v : nodes) nodeVals.push_back(v[0]);
-        LagrangeBasis basis(nodeVals);
+        LagrangeBasis1D basis(nodeVals);
         DiscreteNormCalculator calc(numSamples);
         double lebesgue = calc.computeNorm(basis, domain);
         std::cout << "Lebesgue constant (uniform nodes, degree " << degree << "): " << lebesgue << std::endl;
@@ -28,7 +28,7 @@ void computeForInterval(int degree, int numSamples) {
         auto chebNodes = chebInit.generate(domain, numNodes);
         std::vector<double> nodeVals;
         for (const auto& v : chebNodes) nodeVals.push_back(v[0]);
-        LagrangeBasis chebBasis(nodeVals);
+        LagrangeBasis1D chebBasis(nodeVals);
         DiscreteNormCalculator calc(numSamples);
         double lebesgue = calc.computeNorm(chebBasis, domain);
         std::cout << "Lebesgue constant (Chebyshev nodes, degree " << degree << "): " << lebesgue << std::endl;

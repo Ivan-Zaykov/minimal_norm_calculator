@@ -2,10 +2,10 @@
 #include "basis/IBasis.h"
 #include <vector>
 
-class LagrangeBasis : public IBasis
+class LagrangeBasis1D : public IBasis
 {
 public:
-    LagrangeBasis(const std::vector<double> &nodes);
+    LagrangeBasis1D(const std::vector<double> &nodes);
     int size() const override;
     double value(int i, const Vector &x) const override;
     Vector gradient(int i, const Vector &x) const override;
