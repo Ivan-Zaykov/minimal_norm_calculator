@@ -76,12 +76,14 @@ void ComputeCommand::computeUniformInterval(const ProgramOptions& opts) const {
 }
 
 void ComputeCommand::computeChebyshevInterval(const ProgramOptions& opts) const {
+    IntervalDomain chebInitDomain(-1.0, 1.0);
     IntervalDomain domain(0.0, 1.0);
     int numNodes = opts.degree + 1;
     ChebyshevInitializer init;
-    auto nodes = init.generate(domain, numNodes);
+    auto nodes = init.generate(chebInitDomain, numNodes);
     std::vector<double> nodeVals;
     for (const auto& v : nodes) nodeVals.push_back(v[0]);
+    std::sort(nodeVals.begin(), nodeVals.end());
     LagrangeBasis1D basis(nodeVals);
     DiscreteNormCalculator calc(opts.numSamples);
     double lebesgue = calc.computeNorm(basis, domain);

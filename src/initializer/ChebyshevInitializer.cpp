@@ -1,6 +1,9 @@
 #include "initializer/ChebyshevInitializer.h"
 #include <cmath>
 
+ChebyshevInitializer::ChebyshevInitializer(double a, double b)
+    : a_(a), b_(b) {}
+
 std::vector<Vector> ChebyshevInitializer::generate(const Domain& domain, int numNodes) const {
     std::vector<Vector> nodes;
     int d = domain.dimension();
