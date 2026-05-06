@@ -5,7 +5,6 @@ std::vector<Vector> UniformInitializer::generate(const Domain& domain, int numNo
     std::vector<Vector> nodes;
     int d = domain.dimension();
     if (d == 1) {
-        double a = 0.0, b = 1.0; // для отрезка, но domain может дать границы
         // упрощённо: считаем, что область - [0,1]^d
         for (int i = 0; i < numNodes; ++i) {
             double x = (double)i / (numNodes-1);

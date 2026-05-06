@@ -5,6 +5,8 @@
 build
 .vscode
 
+nodes/*
+
 # Compiled Object files
 *.slo
 *.lo

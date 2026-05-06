@@ -14,7 +14,17 @@ double LagrangeBasis1D::value(int i, const Vector& x) const {
     double res = 1.0;
     for (size_t j = 0; j < nodes_.size(); ++j) {
         if (j == (size_t)i) continue;
-        res *= (xv - nodes_[j]) / (nodes_[i] - nodes_[j]);
+        double denom = nodes_[i] - nodes_[j];
+        if (std::abs(denom) < 1e-15) {
+            // Узлы совпадают — вырожденный случай
+            return 0.0;
+        }
+        double numer = xv - nodes_[j];
+        res *= numer / denom;
+    }
+    // Если xv очень близко к nodes_[i], но не точно из-за округления
+    if (std::abs(xv - nodes_[i]) < 1e-12) {
+        return 1.0;
     }
     return res;
 }
