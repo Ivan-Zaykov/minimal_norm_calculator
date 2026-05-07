@@ -1,8 +1,8 @@
 #pragma once
-#include "cli/Command.h"
+#include "cli/commands/Command.h"
 #include <vector>
 #include <string>
-#include "Vector.h" 
+#include "util/Vector.h"
 
 class OptimizeCommand : public Command {
 public:

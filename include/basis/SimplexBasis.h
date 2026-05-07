@@ -1,6 +1,6 @@
 #pragma once
 #include "basis/IBasis.h"
-#include "Vector.h"
+#include "util/Vector.h"
 #include <vector>
 
 class SimplexBasis : public IBasis {

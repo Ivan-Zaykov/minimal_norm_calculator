@@ -28,15 +28,3 @@ struct ProgramOptions {
     int maxIterations = 500;
     std::string outputFile = "";        // файл для сохранения узлов
 };
-
-class CommandLineParser {
-public:
-    ProgramOptions parse(int argc, char* argv[]);
-    void printUsage(const char* programName) const;
-
-private:
-    void parseCommonArgs(ProgramOptions& opts, int& i, int argc, char* argv[]);
-    void parseComputeArgs(ProgramOptions& opts, int& i, int argc, char* argv[]);
-    void parseOptimizeArgs(ProgramOptions& opts, int& i, int argc, char* argv[]);
-    void validateOptions(const ProgramOptions& opts) const;
-};

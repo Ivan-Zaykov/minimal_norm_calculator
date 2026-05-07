@@ -1,5 +1,5 @@
 #pragma once
-#include "Vector.h"
+#include "util/Vector.h"
 #include <vector>
 
 class Domain {
@@ -9,4 +9,3 @@ public:
     virtual std::vector<Vector> samplePoints(int numPoints) const = 0;
     virtual int dimension() const = 0;
 };
-
