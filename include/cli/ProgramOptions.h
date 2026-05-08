@@ -14,7 +14,7 @@ struct ProgramOptions {
     // Общие опции
     int degree = 5;
     int numSamples = 1000;
-    DomainType domainType = DomainType::INTERVAL;
+    DomainType domainType = DomainType::SIMPLEX;
     int dimension = 1;
     bool showHelp = false;
 

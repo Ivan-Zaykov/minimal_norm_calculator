@@ -2,7 +2,6 @@
 #include <string>
 
 enum class DomainType {
-    INTERVAL,
     HYPERCUBE,
     SIMPLEX
 };

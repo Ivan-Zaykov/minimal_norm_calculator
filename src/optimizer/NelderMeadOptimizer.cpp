@@ -1,6 +1,5 @@
 #include "optimizer/NelderMeadOptimizer.h"
 #include "calculator/DiscreteNormCalculator.h"
-#include "basis/LagrangeBasis1D.h"
 #include <cmath>
 #include <iostream>
 
@@ -12,7 +11,7 @@ std::vector<Vector> NelderMeadOptimizer::optimize(const Domain& domain, int degr
     int numNodes = degree + 1; // для одномерного случая
     auto nodes = initializer.generate(domain, numNodes);
     // Здесь нужно реализовать метод Нелдера-Мида, изменяя координаты узлов
-    // Функция цели: normCalc_->computeNorm(LagrangeBasis1D(nodes), domain)
+    // Функция цели: normCalc_->computeNorm(LagrangeBasis(nodes), domain)
     // Пока просто возвращаем начальные узлы
     std::cout << "NelderMeadOptimizer: optimization not fully implemented, returning initial nodes.\n";
     return nodes;

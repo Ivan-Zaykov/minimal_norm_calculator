@@ -66,10 +66,6 @@ void CommandLineParser::parseCommonArgs(ProgramOptions& opts, int& i, int argc, 
         if (i + 1 < argc) {
             try {
                 opts.domainType = parseDomainType(argv[++i]);
-                // Для интервала размерность фиксирована
-                if (opts.domainType == DomainType::INTERVAL) {
-                    opts.dimension = 1;
-                }
             } catch (const std::exception& e) {
                 std::cerr << e.what() << "\n";
                 std::exit(1);
@@ -173,10 +169,6 @@ void CommandLineParser::validateOptions(const ProgramOptions& opts) const {
     }
     if (opts.numSamples < 10) {
         std::cerr << "Error: samples must be >= 10\n";
-        std::exit(1);
-    }
-    if (opts.domainType == DomainType::INTERVAL && opts.dimension != 1) {
-        std::cerr << "Warning: interval domain forces dimension = 1\n";
         std::exit(1);
     }
     if ((opts.domainType == DomainType::HYPERCUBE || opts.domainType == DomainType::SIMPLEX)

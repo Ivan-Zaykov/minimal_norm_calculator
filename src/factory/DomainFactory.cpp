@@ -1,13 +1,10 @@
 #include "factory/DomainFactory.h"
-#include "domain/IntervalDomain.h"
 #include "domain/HypercubeDomain.h"
 #include "domain/SimplexDomain.h"
 #include <stdexcept>
 
 std::unique_ptr<Domain> DomainFactory::create(const ProgramOptions& opts) {
     switch (opts.domainType) {
-        case DomainType::INTERVAL:
-            return std::make_unique<IntervalDomain>(0.0, 1.0);
         case DomainType::HYPERCUBE:
             return std::make_unique<HypercubeDomain>(opts.dimension, 0.0, 1.0);
         case DomainType::SIMPLEX: {
@@ -28,14 +25,12 @@ std::unique_ptr<Domain> DomainFactory::create(const ProgramOptions& opts) {
 
 int DomainFactory::getNumNodes(const ProgramOptions& opts) {
     switch (opts.domainType) {
-        case DomainType::INTERVAL:
-            return opts.degree + 1;
         case DomainType::HYPERCUBE:
             return static_cast<int>(std::pow(opts.degree + 1, opts.dimension));
         case DomainType::SIMPLEX: {
             int numNodes = 1;
-            for (int i = 1; i <= opts.dimension; ++i) {
-                numNodes = numNodes * (opts.degree + i) / i;
+            for (int i = 1; i <= opts.degree; ++i) {
+                numNodes = numNodes * (opts.dimension + i) / i;
             }
             return numNodes;
         }

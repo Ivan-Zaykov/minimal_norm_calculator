@@ -6,8 +6,6 @@
 #include "initializer/ChebyshevInitializer.h"
 #include <iostream>
 #include <fstream>
-#include "domain/IntervalDomain.h"
-#include "basis/LagrangeBasis1D.h"
 
 void ComputeCommand::execute(const ProgramOptions& opts) {
     printHeader(opts);
@@ -54,11 +52,4 @@ void ComputeCommand::computeFromFile(const ProgramOptions& opts, const std::stri
         std::cerr << "Need at least 2 nodes" << std::endl;
         return;
     }
-
-    // Пока только для IntervalDomain
-    IntervalDomain domain(0.0, 1.0);
-    LagrangeBasis1D basis(nodeVals);
-    DiscreteNormCalculator calc(opts.numSamples);
-    double lebesgue = calc.computeNorm(basis, domain);
-    std::cout << "Lebesgue constant (from file, " << nodeVals.size() << " nodes): " << lebesgue << std::endl;
 }
