@@ -29,7 +29,7 @@ std::unique_ptr<IBasis> BasisFactory::create(const Domain& domain, const std::ve
         if (opts.degree != 1) {
             throw std::runtime_error("Simplex interpolation only implemented for degree 1 (linear)");
         }
-        // Вершины симплекса — это и есть nodes
+        // Используем переданные nodes (вершины симплекса)
         return std::make_unique<SimplexBasis>(nodes);
     }
 
