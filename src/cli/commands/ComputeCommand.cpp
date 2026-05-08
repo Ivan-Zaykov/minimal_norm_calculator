@@ -7,21 +7,23 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
-#include <algorithm>
-
 void ComputeCommand::execute(const ProgramOptions& opts) {
     printHeader(opts);
 
-    if (opts.nodeType == "uniform") {
-        UniformInitializer init;
-        compute(opts, init);
-    } else if (opts.nodeType == "chebyshev") {
-        ChebyshevInitializer init;
-        compute(opts, init);
-    } else if (opts.nodeType == "file") {
-        computeFromFile(opts, opts.nodeFile);
-    } else {
-        std::cerr << "Unknown node type: " << opts.nodeType << "\n";
+    try {
+        if (opts.nodeType == "uniform") {
+            UniformInitializer init;
+            compute(opts, init);
+        } else if (opts.nodeType == "chebyshev") {
+            ChebyshevInitializer init;
+            compute(opts, init);
+        } else if (opts.nodeType == "file") {
+            computeFromFile(opts, opts.nodeFile);
+        } else {
+            std::cerr << "Unknown node type: " << opts.nodeType << "\n";
+        }
+    } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
     }
 }
 
@@ -29,7 +31,6 @@ void ComputeCommand::compute(const ProgramOptions& opts, IInitializer& initializ
     auto domain = DomainFactory::create(opts);
     int numNodes = DomainFactory::getNumNodes(opts);
     auto nodes = initializer.generate(*domain, numNodes);
-    std::sort(nodes.begin(), nodes.end());
     auto basis = BasisFactory::create(*domain, nodes, opts);
 
     // Проверка интерполяции
@@ -121,7 +122,7 @@ void ComputeCommand::verifyInterpolation(const IBasis& basis, const std::vector<
             computed += nodeValues[i] * basis.value(i, nodes[k]);
         }
 
-        double expected = testFunction(nodes[k]);
+        double expected = nodeValues[k];
         double error = std::abs(computed - expected);
 
         if (error > maxError) {
