@@ -1,26 +1,23 @@
 #include "cli/commands/ComputeCommand.h"
 #include "factory/DomainFactory.h"
 #include "factory/BasisFactory.h"
+#include "factory/InitializerFactory.h"
 #include "calculator/DiscreteNormCalculator.h"
 #include "initializer/UniformInitializer.h"
 #include "initializer/ChebyshevInitializer.h"
 #include <iostream>
 #include <fstream>
 #include <iomanip>
+
 void ComputeCommand::execute(const ProgramOptions& opts) {
     printHeader(opts);
 
     try {
-        if (opts.nodeType == "uniform") {
-            UniformInitializer init;
-            compute(opts, init);
-        } else if (opts.nodeType == "chebyshev") {
-            ChebyshevInitializer init;
-            compute(opts, init);
-        } else if (opts.nodeType == "file") {
+        if (opts.nodeType == "file") {
             computeFromFile(opts, opts.nodeFile);
         } else {
-            std::cerr << "Unknown node type: " << opts.nodeType << "\n";
+            auto init = InitializerFactory::create(opts.nodeType);
+            compute(opts, *init);
         }
     } catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;
