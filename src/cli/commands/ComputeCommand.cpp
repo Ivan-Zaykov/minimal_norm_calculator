@@ -27,7 +27,7 @@ void ComputeCommand::execute(const ProgramOptions& opts) {
 
 void ComputeCommand::compute(const ProgramOptions& opts, IInitializer& initializer) const {
     auto domain = DomainFactory::create(opts);
-    int numNodes = opts.degree + 1;  // для interval; для куба нужно пересмотреть
+    int numNodes = DomainFactory::getNumNodes(opts);
     auto nodes = initializer.generate(*domain, numNodes);
     auto basis = BasisFactory::create(*domain, nodes, opts);
 

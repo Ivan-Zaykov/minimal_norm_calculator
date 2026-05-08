@@ -25,3 +25,21 @@ std::unique_ptr<Domain> DomainFactory::create(const ProgramOptions& opts) {
             throw std::runtime_error("Unsupported domain type");
     }
 }
+
+int DomainFactory::getNumNodes(const ProgramOptions& opts) {
+    switch (opts.domainType) {
+        case DomainType::INTERVAL:
+            return opts.degree + 1;
+        case DomainType::HYPERCUBE:
+            return static_cast<int>(std::pow(opts.degree + 1, opts.dimension));
+        case DomainType::SIMPLEX: {
+            int numNodes = 1;
+            for (int i = 1; i <= opts.dimension; ++i) {
+                numNodes = numNodes * (opts.degree + i) / i;
+            }
+            return numNodes;
+        }
+        default:
+            throw std::runtime_error("Unsupported domain type");
+    }
+}
