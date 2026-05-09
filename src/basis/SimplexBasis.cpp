@@ -34,8 +34,6 @@ double SimplexBasis::value(int i, const Vector& x) const {
         res += Ainv_(i, k) * aug(k);
     }
 
-    std::cout << "Point x = (" << x[0] << ", " << x[1] << ")" << std::endl;
-    std::cout << "aug = (" << aug(0) << ", " << aug(1) << ", " << aug(2) << ")" << std::endl;
     return res;
 }
 
