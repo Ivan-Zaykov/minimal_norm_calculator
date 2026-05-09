@@ -30,6 +30,16 @@ void ComputeCommand::compute(const ProgramOptions& opts, IInitializer& initializ
     auto nodes = initializer.generate(*domain, numNodes);
     auto basis = BasisFactory::create(*domain, nodes, opts);
 
+
+    std::cout << "\n=== Nodes ===" << std::endl;
+    for (size_t k = 0; k < nodes.size(); ++k) {
+        std::cout << "Node " << k << ": (";
+        for (size_t d = 0; d < nodes[k].size(); ++d) {
+            std::cout << nodes[k][d];
+            if (d + 1 < nodes[k].size()) std::cout << ", ";
+        }
+        std::cout << ")" << std::endl;
+    }
     // Проверка интерполяции
     verifyInterpolation(*basis, nodes);
 

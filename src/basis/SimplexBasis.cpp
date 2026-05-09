@@ -1,6 +1,7 @@
 #include "basis/SimplexBasis.h"
 #include <Eigen/Dense>
 #include <stdexcept>
+#include <iostream>
 
 SimplexBasis::SimplexBasis(const std::vector<Vector>& vertices) : vertices_(vertices) {
     n_ = vertices.size() - 1;
@@ -20,6 +21,9 @@ SimplexBasis::SimplexBasis(const std::vector<Vector>& vertices) : vertices_(vert
             barycentricCoeffs[j][k] = Ainv(k, j);
         }
     }
+
+    std::cout << "A = \n" << A << std::endl;
+    std::cout << "Ainv = \n" << Ainv << std::endl;
 }
 
 int SimplexBasis::size() const { return n_+1; }
@@ -32,6 +36,10 @@ double SimplexBasis::value(int i, const Vector& x) const {
     aug(n_) = 1.0;
     double res = 0.0;
     for (int k = 0; k <= n_; ++k) res += barycentricCoeffs[i][k] * aug(k);
+
+    std::cout << "Point x = (" << x[0] << ", " << x[1] << ")" << std::endl;
+    std::cout << "aug = (" << aug(0) << ", " << aug(1) << ", " << aug(2) << ")" << std::endl;
+    std::cout << "barycentricCoeffs[" << i << "] = (";
     return res;
 }
 
