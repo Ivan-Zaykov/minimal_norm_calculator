@@ -1,6 +1,7 @@
 #include "initializer/UniformInitializer.h"
 #include <cmath>
 #include "domain/SimplexDomain.h"
+#include <algorithm>
 
 std::vector<Vector> UniformInitializer::generate(const Domain& domain, int numNodes) const {
     std::vector<Vector> nodes;
@@ -38,6 +39,14 @@ std::vector<Vector> UniformInitializer::generate(const Domain& domain, int numNo
             }
             nodes.push_back(p);
         }
+
+        std::sort(nodes.begin(), nodes.end(),
+          [](const Vector& a, const Vector& b) {
+              for (size_t i = 0; i < a.size(); ++i) {
+                  if (a[i] != b[i]) return a[i] < b[i];
+              }
+              return false;
+          });
     }
     return nodes;
 }
