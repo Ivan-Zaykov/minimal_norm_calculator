@@ -111,13 +111,20 @@ void ComputeCommand::verifyInterpolation(const IBasis& basis, const std::vector<
         nodeValues[k] = testFunction(nodes[k]);
     }
 
-    // Выводим заголовок таблицы
-    std::cout << std::setw(12) << "Node"
-              << std::setw(20) << "Coordinates"
-              << std::setw(15) << "f(node)"
-              << std::setw(20) << "P(f)(node)"
-              << std::setw(15) << "Error" << std::endl;
-    std::cout << std::string(82, '-') << std::endl;
+    // Определяем формат вывода
+    const int width_node = 6;
+    const int width_coord = 18;
+    const int width_value = 15;
+    const int width_error = 15;
+
+    // Заголовок
+    std::cout << std::string(width_node + width_coord + 2*width_value + width_error + 6, '=') << std::endl;
+    std::cout << "|| " << std::setw(width_node) << "Node"
+            << " || " << std::setw(width_coord) << "Coordinates"
+            << " || " << std::setw(width_value) << "f(node)"
+            << " || " << std::setw(width_value) << "P(f)(node)"
+            << " || " << std::setw(width_error) << "Error" << " ||" << std::endl;
+    std::cout << std::string(width_node + width_coord + 2*width_value + width_error + 6, '=') << std::endl;
 
     double maxError = 0.0;
     int maxErrorNode = -1;
@@ -137,32 +144,33 @@ void ComputeCommand::verifyInterpolation(const IBasis& basis, const std::vector<
             maxErrorNode = k;
         }
 
-        // Форматированный вывод
-        std::cout << std::setw(12) << k;
+        // Форматированный вывод с двойными разделителями
+        std::cout << "|| " << std::setw(width_node) << k;
 
-        // Вывод координат
-        std::string coords = "(";
+        // Вывод координат (красиво форматируем)
+        std::ostringstream coordStream;
+        coordStream << "(";
         for (size_t d = 0; d < nodes[k].size(); ++d) {
-            coords += std::to_string(nodes[k][d]);
-            if (d + 1 < nodes[k].size()) coords += ", ";
+            coordStream << std::fixed << std::setprecision(4) << nodes[k][d];
+            if (d + 1 < nodes[k].size()) coordStream << ", ";
         }
-        coords += ")";
-        std::cout << std::setw(20) << coords;
+        coordStream << ")";
+        std::cout << " || " << std::setw(width_coord) << coordStream.str();
 
-        std::cout << std::setw(15) << std::setprecision(8) << expected
-                  << std::setw(20) << std::setprecision(8) << computed
-                  << std::setw(15) << std::scientific << error << std::endl;
-    }
+        std::cout << " || " << std::setw(width_value) << std::setprecision(8) << expected
+                << " || " << std::setw(width_value) << std::setprecision(8) << computed
+                << " || " << std::setw(width_error) << std::scientific << error << " ||" << std::endl;
+        }
 
-    std::cout << std::string(82, '-') << std::endl;
-    std::cout << "Max error: " << std::scientific << maxError << " at node " << maxErrorNode << std::endl;
+        std::cout << std::string(width_node + width_coord + 2*width_value + width_error + 6, '=') << std::endl;
+        std::cout << "Max error: " << std::scientific << maxError << " at node " << maxErrorNode << std::endl;
 
-    if (maxError > 1e-10) {
-        std::cout << "WARNING: Interpolation property not satisfied!" << std::endl;
-        std::cout << "This may indicate a bug in basis construction or value() method." << std::endl;
-    } else {
-        std::cout << "OK: Interpolation property holds (error < 1e-10)" << std::endl;
-    }
+        if (maxError > 1e-10) {
+            std::cout << "WARNING: Interpolation property not satisfied!" << std::endl;
+            std::cout << "This may indicate a bug in basis construction or value() method." << std::endl;
+        } else {
+            std::cout << "OK: Interpolation property holds (error < 1e-10)" << std::endl;
+        }
 
     std::cout << std::endl;
 }
