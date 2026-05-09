@@ -2,6 +2,7 @@
 #include "basis/IBasis.h"
 #include "util/Vector.h"
 #include <vector>
+#include <Eigen/Dense>
 
 class SimplexBasis : public IBasis {
 public:
@@ -12,5 +13,5 @@ public:
 private:
     std::vector<Vector> vertices_;  // n+1 вершин в R^n
     int n_; // размерность пространства
-    std::vector<Vector> barycentricCoeffs; // для вычисления lambda_i(x)
+    Eigen::MatrixXd Ainv_; // для вычисления lambda_i(x)
 };

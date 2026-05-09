@@ -14,16 +14,10 @@ SimplexBasis::SimplexBasis(const std::vector<Vector>& vertices) : vertices_(vert
         A(n_, j) = 1.0;
     }
 
-    barycentricCoeffs.resize(n_+1, Vector(n_+1));
-    Eigen::MatrixXd Ainv = A.inverse();
-    for (int j = 0; j <= n_; ++j) {
-        for (int k = 0; k <= n_; ++k) {
-            barycentricCoeffs[j][k] = Ainv(k, j);
-        }
-    }
+    Ainv_ = A.inverse();
 
     std::cout << "A = \n" << A << std::endl;
-    std::cout << "Ainv = \n" << Ainv << std::endl;
+    std::cout << "Ainv = \n" << Ainv_ << std::endl;
 }
 
 int SimplexBasis::size() const { return n_+1; }
@@ -34,18 +28,20 @@ double SimplexBasis::value(int i, const Vector& x) const {
     Eigen::VectorXd aug(n_+1);
     for (int k = 0; k < n_; ++k) aug(k) = x[k];
     aug(n_) = 1.0;
+
     double res = 0.0;
-    for (int k = 0; k <= n_; ++k) res += barycentricCoeffs[i][k] * aug(k);
+    for (int k = 0; k <= n_; ++k) {
+        res += Ainv_(i, k) * aug(k);
+    }
 
     std::cout << "Point x = (" << x[0] << ", " << x[1] << ")" << std::endl;
     std::cout << "aug = (" << aug(0) << ", " << aug(1) << ", " << aug(2) << ")" << std::endl;
-    std::cout << "barycentricCoeffs[" << i << "] = (";
     return res;
 }
 
 Vector SimplexBasis::gradient(int i, const Vector& x) const {
     // Для линейных барицентрических координат градиент постоянен
     Vector grad(n_);
-    for (int d = 0; d < n_; ++d) grad[d] = barycentricCoeffs[i][d];
+    for (int d = 0; d < n_; ++d) grad[d] = Ainv_(d, i);
     return grad;
 }
