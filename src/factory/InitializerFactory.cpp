@@ -4,6 +4,7 @@
 #include <memory>
 #include <string>
 #include <stdexcept>
+#include "initializer/FeketeInitializer.h"
 
 class InitializerFactory {
    public:
@@ -13,6 +14,8 @@ class InitializerFactory {
             return std::make_unique<UniformInitializer>();
         } else if (type == "chebyshev") {
             return std::make_unique<ChebyshevInitializer>(a, b);
+        } else if (type == "fekete") {
+            return std::make_unique<FeketeInitializer>();
         } else {
             throw std::runtime_error("Unknown initializer type: " + type);
         }

@@ -126,8 +126,8 @@ void CommandLineParser::parseComputeArgs(ProgramOptions& opts, int& i, int argc,
         if (i + 1 < argc) {
             opts.nodeType = argv[++i];
             if (opts.nodeType != "uniform" && opts.nodeType != "chebyshev" &&
-                opts.nodeType != "file") {
-                std::cerr << "Error: node type must be uniform, chebyshev, or file\n";
+                opts.nodeType != "fekete" && opts.nodeType != "file") {
+                std::cerr << "Error: node type must be uniform, chebyshev, fekete, or file\n";
                 std::exit(1);
             }
         } else {
