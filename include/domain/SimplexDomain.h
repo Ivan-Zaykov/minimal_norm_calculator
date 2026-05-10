@@ -3,12 +3,17 @@
 #include <vector>
 
 class SimplexDomain : public Domain {
-public:
+   public:
     SimplexDomain(const std::vector<Vector>& vertices);
-    bool contains(const Vector& p) const override;
+    bool                contains(const Vector& p) const override;
     std::vector<Vector> samplePoints(int numPoints) const override;
-    int dimension() const override { return vertices_.size() - 1; }
-    const std::vector<Vector>& getVertices() const { return vertices_; }
-private:
+    int                 dimension() const override {
+        return vertices_.size() - 1;
+    }
+    const std::vector<Vector>& getVertices() const {
+        return vertices_;
+    }
+
+   private:
     std::vector<Vector> vertices_;
 };

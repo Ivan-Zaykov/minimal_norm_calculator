@@ -6,8 +6,9 @@
 #include <vector>
 
 class IOptimizer {
-public:
+   public:
     virtual ~IOptimizer() = default;
     // возвращает оптимальные узлы (как векторы координат)
-    virtual std::vector<Vector> optimize(const Domain& domain, int degree, const IInitializer& initializer) = 0;
+    virtual std::vector<Vector> optimize(const Domain& domain, int degree,
+                                         const IInitializer& initializer) = 0;
 };

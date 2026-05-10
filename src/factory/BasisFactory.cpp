@@ -6,10 +6,11 @@
 #include <stdexcept>
 #include "basis/LagrangeBasis1D.h"
 
-std::unique_ptr<IBasis> BasisFactory::create(const Domain& domain, const std::vector<Vector>& nodes, const ProgramOptions& opts) {
+std::unique_ptr<IBasis> BasisFactory::create(const Domain& domain, const std::vector<Vector>& nodes,
+                                             const ProgramOptions& opts) {
     // Для HypercubeDomain — тензорное произведение
     if (auto* hypercube = dynamic_cast<const HypercubeDomain*>(&domain)) {
-        int dim = hypercube->dimension();
+        int dim      = hypercube->dimension();
         int numNodes = nodes.size();
 
         // Определяем количество точек по каждому измерению
@@ -23,20 +24,20 @@ std::unique_ptr<IBasis> BasisFactory::create(const Domain& domain, const std::ve
 
         // Сортируем узлы по координатам
         auto sortedNodes = nodes;
-        std::sort(sortedNodes.begin(), sortedNodes.end(),
-                  [](const Vector& a, const Vector& b) {
-                      for (size_t d = 0; d < a.size(); ++d) {
-                          if (a[d] != b[d]) return a[d] < b[d];
-                      }
-                      return false;
-                  });
+        std::sort(sortedNodes.begin(), sortedNodes.end(), [](const Vector& a, const Vector& b) {
+            for (size_t d = 0; d < a.size(); ++d) {
+                if (a[d] != b[d])
+                    return a[d] < b[d];
+            }
+            return false;
+        });
 
         // Строим сетки по каждому измерению
         std::vector<std::vector<double>> grids(dim);
         for (int d = 0; d < dim; ++d) {
             grids[d].resize(pointsPerDim);
             for (int i = 0; i < pointsPerDim; ++i) {
-                int idx = i * static_cast<int>(std::pow(pointsPerDim, dim - d - 1));
+                int idx     = i * static_cast<int>(std::pow(pointsPerDim, dim - d - 1));
                 grids[d][i] = sortedNodes[idx][d];
             }
             // Убираем возможные дубликаты из-за погрешностей
@@ -52,7 +53,8 @@ std::unique_ptr<IBasis> BasisFactory::create(const Domain& domain, const std::ve
         if (domain.dimension() == 1) {
             // Для отрезка используем одномерный базис Лагранжа
             std::vector<double> nodeVals;
-            for (const auto& v : nodes) nodeVals.push_back(v[0]);
+            for (const auto& v : nodes)
+                nodeVals.push_back(v[0]);
             return std::make_unique<LagrangeBasis1D>(nodeVals);
         } else {
             if (opts.degree != 1) {

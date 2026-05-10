@@ -3,12 +3,11 @@
 #include "domain/Domain.h"
 #include "basis/IBasis.h"
 
-class DiscreteNormCalculator : public INormCalculator
-{
-public:
+class DiscreteNormCalculator : public INormCalculator {
+   public:
     DiscreteNormCalculator(int numSamplePoints = 10000);
-    double computeNorm(const IBasis &basis, const Domain &domain) override;
+    double computeNorm(const IBasis& basis, const Domain& domain) override;
 
-private:
+   private:
     int numSamplePoints_;
 };

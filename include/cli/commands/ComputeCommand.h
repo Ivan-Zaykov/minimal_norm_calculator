@@ -1,14 +1,14 @@
 #pragma once
 #include "cli/commands/Command.h"
 #include "initializer/IInitializer.h"
-#include "basis/IBasis.h"  
+#include "basis/IBasis.h"
 #include <string>
 
 class ComputeCommand : public Command {
-public:
+   public:
     void execute(const ProgramOptions& opts) override;
 
-private:
+   private:
     void compute(const ProgramOptions& opts, IInitializer& initializer) const;
 
     void computeFromFile(const ProgramOptions& opts, const std::string& filename) const;

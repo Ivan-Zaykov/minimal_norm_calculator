@@ -1,6 +1,21 @@
 cmake_minimum_required(VERSION 3.10)
 project(LebesgueOptimizer)
 
+find_program(CLANG_FORMAT clang-format)
+if(CLANG_FORMAT)
+    # Получаем список всех .cpp и .h файлов рекурсивно
+    file(GLOB_RECURSE SOURCE_FILES
+        "${CMAKE_SOURCE_DIR}/src/*.cpp"
+        "${CMAKE_SOURCE_DIR}/include/*.h"
+    )
+
+    add_custom_target(format
+        COMMAND ${CLANG_FORMAT} -i ${SOURCE_FILES}
+        COMMENT "Formatting source code"
+        VERBATIM
+    )
+endif()
+
 # Режим сборки
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Debug CACHE STRING "Build type" FORCE)

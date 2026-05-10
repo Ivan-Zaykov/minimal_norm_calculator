@@ -4,7 +4,7 @@
 #include <memory>
 
 class DomainFactory {
-public:
+   public:
     static std::unique_ptr<Domain> create(const ProgramOptions& opts);
-    static int getNumNodes(const ProgramOptions& opts);
+    static int                     getNumNodes(const ProgramOptions& opts);
 };

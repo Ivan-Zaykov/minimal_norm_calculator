@@ -4,7 +4,7 @@
 #include <vector>
 
 class IInitializer {
-public:
-    virtual ~IInitializer() = default;
+   public:
+    virtual ~IInitializer()                                                        = default;
     virtual std::vector<Vector> generate(const Domain& domain, int numNodes) const = 0;
 };

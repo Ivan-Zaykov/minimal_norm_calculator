@@ -4,9 +4,12 @@
 
 static std::string commandToString(CommandEnum cmd) {
     switch (cmd) {
-        case CommandEnum::COMPUTE: return "compute";
-        case CommandEnum::OPTIMIZE: return "optimize";
-        default: return "unknown";
+        case CommandEnum::COMPUTE:
+            return "compute";
+        case CommandEnum::OPTIMIZE:
+            return "optimize";
+        default:
+            return "unknown";
     }
 }
 

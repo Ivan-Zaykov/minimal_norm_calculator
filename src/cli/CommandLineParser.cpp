@@ -24,14 +24,12 @@ ProgramOptions CommandLineParser::parse(int argc, char* argv[]) {
         for (int i = 2; i < argc; ++i) {
             parseComputeArgs(opts, i, argc, argv);
         }
-    }
-    else if (firstArg == "optimize") {
+    } else if (firstArg == "optimize") {
         opts.command = CommandEnum::OPTIMIZE;
         for (int i = 2; i < argc; ++i) {
             parseOptimizeArgs(opts, i, argc, argv);
         }
-    }
-    else {
+    } else {
         // Если первая команда не указана, считаем что это compute
         opts.command = CommandEnum::COMPUTE;
         for (int i = 1; i < argc; ++i) {
@@ -53,16 +51,14 @@ void CommandLineParser::parseCommonArgs(ProgramOptions& opts, int& i, int argc, 
             std::cerr << "Error: missing value for " << arg << "\n";
             std::exit(1);
         }
-    }
-    else if (arg == "-s" || arg == "--samples") {
+    } else if (arg == "-s" || arg == "--samples") {
         if (i + 1 < argc) {
             opts.numSamples = std::atoi(argv[++i]);
         } else {
             std::cerr << "Error: missing value for " << arg << "\n";
             std::exit(1);
         }
-    }
-    else if (arg == "-t" || arg == "--type") {
+    } else if (arg == "-t" || arg == "--type") {
         if (i + 1 < argc) {
             try {
                 opts.domainType = parseDomainType(argv[++i]);
@@ -74,8 +70,7 @@ void CommandLineParser::parseCommonArgs(ProgramOptions& opts, int& i, int argc, 
             std::cerr << "Error: missing value for " << arg << "\n";
             std::exit(1);
         }
-    }
-    else if (arg == "-dim" || arg == "--dimension") {
+    } else if (arg == "-dim" || arg == "--dimension") {
         if (i + 1 < argc) {
             opts.dimension = std::atoi(argv[++i]);
             if (opts.dimension < 1) {
@@ -86,8 +81,7 @@ void CommandLineParser::parseCommonArgs(ProgramOptions& opts, int& i, int argc, 
             std::cerr << "Error: missing value for " << arg << "\n";
             std::exit(1);
         }
-    }
-    else {
+    } else {
         std::cerr << "Unknown option: " << arg << "\n";
         std::exit(1);
     }
@@ -104,11 +98,11 @@ void CommandLineParser::parseComputeArgs(ProgramOptions& opts, int& i, int argc,
             std::cerr << "Error: missing value for --nodes\n";
             std::exit(1);
         }
-    }
-    else if (arg == "-n" || arg == "--node-type") {
+    } else if (arg == "-n" || arg == "--node-type") {
         if (i + 1 < argc) {
             opts.nodeType = argv[++i];
-            if (opts.nodeType != "uniform" && opts.nodeType != "chebyshev" && opts.nodeType != "file") {
+            if (opts.nodeType != "uniform" && opts.nodeType != "chebyshev" &&
+                opts.nodeType != "file") {
                 std::cerr << "Error: node type must be uniform, chebyshev, or file\n";
                 std::exit(1);
             }
@@ -116,8 +110,7 @@ void CommandLineParser::parseComputeArgs(ProgramOptions& opts, int& i, int argc,
             std::cerr << "Error: missing value for " << arg << "\n";
             std::exit(1);
         }
-    }
-    else {
+    } else {
         parseCommonArgs(opts, i, argc, argv);
     }
 }
@@ -132,32 +125,28 @@ void CommandLineParser::parseOptimizeArgs(ProgramOptions& opts, int& i, int argc
             std::cerr << "Error: missing value for " << arg << "\n";
             std::exit(1);
         }
-    }
-    else if (arg == "--tol" || arg == "--tolerance") {
+    } else if (arg == "--tol" || arg == "--tolerance") {
         if (i + 1 < argc) {
             opts.tolerance = std::stod(argv[++i]);
         } else {
             std::cerr << "Error: missing value for " << arg << "\n";
             std::exit(1);
         }
-    }
-    else if (arg == "--max-iter") {
+    } else if (arg == "--max-iter") {
         if (i + 1 < argc) {
             opts.maxIterations = std::atoi(argv[++i]);
         } else {
             std::cerr << "Error: missing value for " << arg << "\n";
             std::exit(1);
         }
-    }
-    else if (arg == "-o" || arg == "--output") {
+    } else if (arg == "-o" || arg == "--output") {
         if (i + 1 < argc) {
             opts.outputFile = argv[++i];
         } else {
             std::cerr << "Error: missing value for " << arg << "\n";
             std::exit(1);
         }
-    }
-    else {
+    } else {
         parseCommonArgs(opts, i, argc, argv);
     }
 }
@@ -171,8 +160,8 @@ void CommandLineParser::validateOptions(const ProgramOptions& opts) const {
         std::cerr << "Error: samples must be >= 10\n";
         std::exit(1);
     }
-    if ((opts.domainType == DomainType::HYPERCUBE || opts.domainType == DomainType::SIMPLEX)
-    && opts.dimension < 1) {
+    if ((opts.domainType == DomainType::HYPERCUBE || opts.domainType == DomainType::SIMPLEX) &&
+        opts.dimension < 1) {
         std::cerr << "Error: dimension must be >= 1 for cube/simplex\n";
         std::exit(1);
     }
@@ -183,28 +172,29 @@ void CommandLineParser::validateOptions(const ProgramOptions& opts) const {
 }
 
 void CommandLineParser::printUsage(const char* programName) const {
-    std::cout << "Usage: " << programName << " [COMMAND] [OPTIONS]\n\n"
-              << "COMMANDS:\n"
-              << "  compute           Compute Lebesgue constant for given nodes (default)\n"
-              << "  optimize          Find nodes that minimize Lebesgue constant\n\n"
-              << "COMMON OPTIONS:\n"
-              << "  -d, --degree N        Polynomial degree (default: 5)\n"
-              << "  -s, --samples N       Number of sample points (default: 1000)\n"
-              << "  -t, --type TYPE       Domain type: interval, cube, simplex (default: interval)\n"
-              << "  -dim, --dimension D   Dimension for cube/simplex (default: 1)\n"
-              << "  -h, --help            Show this help\n\n"
-              << "OPTIONS FOR 'compute':\n"
-              << "  -n, --node-type TYPE  Node type: uniform, chebyshev, file (default: uniform)\n"
-              << "  --nodes FILE          Read nodes from file (one number per line)\n\n"
-              << "OPTIONS FOR 'optimize':\n"
-              << "  -m, --method METHOD   Optimization method: nelder-mead (default)\n"
-              << "  --tol, --tolerance X  Tolerance for optimizer (default: 1e-6)\n"
-              << "  --max-iter N          Maximum iterations (default: 500)\n"
-              << "  -o, --output FILE     Save optimized nodes to file\n\n"
-              << "EXAMPLES:\n"
-              << "  " << programName << " compute -d 10 -n uniform\n"
-              << "  " << programName << " compute -d 10 -n chebyshev\n"
-              << "  " << programName << " compute --nodes my_nodes.txt\n"
-              << "  " << programName << " optimize -d 10 -m nelder-mead -o best_nodes.txt\n"
-              << "  " << programName << " optimize -t cube -dim 2 -d 3\n";
+    std::cout
+        << "Usage: " << programName << " [COMMAND] [OPTIONS]\n\n"
+        << "COMMANDS:\n"
+        << "  compute           Compute Lebesgue constant for given nodes (default)\n"
+        << "  optimize          Find nodes that minimize Lebesgue constant\n\n"
+        << "COMMON OPTIONS:\n"
+        << "  -d, --degree N        Polynomial degree (default: 5)\n"
+        << "  -s, --samples N       Number of sample points (default: 1000)\n"
+        << "  -t, --type TYPE       Domain type: interval, cube, simplex (default: interval)\n"
+        << "  -dim, --dimension D   Dimension for cube/simplex (default: 1)\n"
+        << "  -h, --help            Show this help\n\n"
+        << "OPTIONS FOR 'compute':\n"
+        << "  -n, --node-type TYPE  Node type: uniform, chebyshev, file (default: uniform)\n"
+        << "  --nodes FILE          Read nodes from file (one number per line)\n\n"
+        << "OPTIONS FOR 'optimize':\n"
+        << "  -m, --method METHOD   Optimization method: nelder-mead (default)\n"
+        << "  --tol, --tolerance X  Tolerance for optimizer (default: 1e-6)\n"
+        << "  --max-iter N          Maximum iterations (default: 500)\n"
+        << "  -o, --output FILE     Save optimized nodes to file\n\n"
+        << "EXAMPLES:\n"
+        << "  " << programName << " compute -d 10 -n uniform\n"
+        << "  " << programName << " compute -d 10 -n chebyshev\n"
+        << "  " << programName << " compute --nodes my_nodes.txt\n"
+        << "  " << programName << " optimize -d 10 -m nelder-mead -o best_nodes.txt\n"
+        << "  " << programName << " optimize -t cube -dim 2 -d 3\n";
 }

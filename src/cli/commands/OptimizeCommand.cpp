@@ -19,12 +19,14 @@ void OptimizeCommand::optimizeNelderMead(const ProgramOptions& opts) const {
     std::cout << "Starting Nelder-Mead optimization...\n";
 }
 
-void OptimizeCommand::saveNodes(const std::vector<Vector>& nodes, const std::string& filename) const {
+void OptimizeCommand::saveNodes(const std::vector<Vector>& nodes,
+                                const std::string&         filename) const {
     std::ofstream file(filename);
     for (const auto& node : nodes) {
         for (size_t i = 0; i < node.size(); ++i) {
             file << node[i];
-            if (i + 1 < node.size()) file << " ";
+            if (i + 1 < node.size())
+                file << " ";
         }
         file << "\n";
     }

@@ -5,13 +5,14 @@
 #include <Eigen/Dense>
 
 class SimplexBasis : public IBasis {
-public:
+   public:
     SimplexBasis(const std::vector<Vector>& vertices);
-    int size() const override;
+    int    size() const override;
     double value(int i, const Vector& x) const override;
     Vector gradient(int i, const Vector& x) const override;
-private:
+
+   private:
     std::vector<Vector> vertices_;  // n+1 вершин в R^n
-    int n_; // размерность пространства
-    Eigen::MatrixXd Ainv_; // для вычисления lambda_i(x)
+    int                 n_;         // размерность пространства
+    Eigen::MatrixXd     Ainv_;      // для вычисления lambda_i(x)
 };

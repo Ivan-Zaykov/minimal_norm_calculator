@@ -5,12 +5,14 @@
 #include <iostream>
 #include <iomanip>
 
-DiscreteNormCalculator::DiscreteNormCalculator(int numSamplePoints) : numSamplePoints_(numSamplePoints) {}
+DiscreteNormCalculator::DiscreteNormCalculator(int numSamplePoints)
+    : numSamplePoints_(numSamplePoints) {
+}
 
 double DiscreteNormCalculator::computeNorm(const IBasis& basis, const Domain& domain) {
-    auto samplePoints = domain.samplePoints(numSamplePoints_);
-    double maxSum = 0.0;
-    double maxX = 0.0;
+    auto   samplePoints = domain.samplePoints(numSamplePoints_);
+    double maxSum       = 0.0;
+    double maxX         = 0.0;
 
     // Открываем файл для логирования
     std::ofstream logFile("lebesgue_debug.csv");
@@ -21,8 +23,8 @@ double DiscreteNormCalculator::computeNorm(const IBasis& basis, const Domain& do
     logFile << ",sum\n";
 
     for (const auto& x : samplePoints) {
-        double xv = x[0];
-        double sum = 0.0;
+        double              xv  = x[0];
+        double              sum = 0.0;
         std::vector<double> values(basis.size());
 
         for (int i = 0; i < basis.size(); ++i) {
@@ -39,7 +41,7 @@ double DiscreteNormCalculator::computeNorm(const IBasis& basis, const Domain& do
 
         if (sum > maxSum) {
             maxSum = sum;
-            maxX = xv;
+            maxX   = xv;
         }
     }
 

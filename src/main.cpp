@@ -6,7 +6,7 @@
 
 int main(int argc, char* argv[]) {
     CommandLineParser parser;
-    ProgramOptions opts = parser.parse(argc, argv);
+    ProgramOptions    opts = parser.parse(argc, argv);
 
     // Показать справку, если запрошено
     if (opts.showHelp) {

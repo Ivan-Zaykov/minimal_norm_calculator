@@ -7,15 +7,13 @@
 #include <stdexcept>
 
 class InitializerFactory {
-public:
+   public:
     static std::unique_ptr<IInitializer> create(const std::string& type) {
         if (type == "uniform") {
             return std::make_unique<UniformInitializer>();
-        }
-        else if (type == "chebyshev") {
+        } else if (type == "chebyshev") {
             return std::make_unique<ChebyshevInitializer>();
-        }
-        else {
+        } else {
             throw std::runtime_error("Unknown initializer type: " + type);
         }
     }
