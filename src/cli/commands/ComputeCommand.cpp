@@ -8,6 +8,8 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
+#include "domain/HypercubeDomain.h"
+#include "domain/SimplexDomain.h"
 
 void ComputeCommand::execute(const ProgramOptions& opts) {
     printHeader(opts);
@@ -55,20 +57,111 @@ void ComputeCommand::compute(const ProgramOptions& opts, IInitializer& initializ
 
 void ComputeCommand::computeFromFile(const ProgramOptions& opts,
                                      const std::string&    filename) const {
+    // Проверяем, что указаны размерность и степень
+    if (opts.dimension <= 0) {
+        std::cerr << "Error: dimension must be specified for file input (use -dim N)" << std::endl;
+        return;
+    }
+    if (opts.degree < 1) {
+        std::cerr << "Error: degree must be specified for file input (use -d N)" << std::endl;
+        return;
+    }
+
     std::ifstream file(filename);
     if (!file.is_open()) {
         std::cerr << "Cannot open file: " << filename << std::endl;
         return;
     }
 
-    std::vector<double> nodeVals;
-    double              val;
-    while (file >> val)
-        nodeVals.push_back(val);
-    if (nodeVals.size() < 2) {
-        std::cerr << "Need at least 2 nodes" << std::endl;
+    // Парсим CSV
+    char                colDelim = opts.csvColDelimiter;
+    std::vector<Vector> nodes;
+    std::string         line;
+    int                 lineNum = 0;
+
+    while (std::getline(file, line)) {
+        lineNum++;
+        if (line.empty())
+            continue;
+
+        std::vector<double> coords;
+        std::stringstream   ss(line);
+        std::string         token;
+
+        while (std::getline(ss, token, colDelim)) {
+            try {
+                coords.push_back(std::stod(token));
+            } catch (const std::exception& e) {
+                std::cerr << "Error parsing line " << lineNum << ": " << token << " is not a number"
+                          << std::endl;
+                return;
+            }
+        }
+
+        if (coords.size() != (size_t)opts.dimension) {
+            std::cerr << "Line " << lineNum << ": expected " << opts.dimension
+                      << " coordinates, got " << coords.size() << std::endl;
+            return;
+        }
+
+        nodes.emplace_back(coords.begin(), coords.end());
+    }
+
+    // Проверяем количество узлов
+    int expectedNodes = 0;
+    if (opts.domainType == DomainType::HYPERCUBE) {
+        expectedNodes = std::pow(opts.degree + 1, opts.dimension);
+    } else {  // SIMPLEX (включая INTERVAL как dim=1)
+        expectedNodes = 1;
+        for (int i = 1; i <= opts.dimension; ++i) {
+            expectedNodes = expectedNodes * (opts.degree + i) / i;
+        }
+    }
+
+    if ((int)nodes.size() != expectedNodes) {
+        std::cerr << "Error: expected " << expectedNodes << " nodes for degree=" << opts.degree
+                  << ", dim=" << opts.dimension << ", but file contains " << nodes.size()
+                  << std::endl;
         return;
     }
+
+    std::cout << "\n=== Loaded " << nodes.size() << " nodes from " << filename << std::endl;
+    std::cout << "Dimension: " << opts.dimension << ", degree: " << opts.degree << std::endl;
+
+    // Создаём домен (без принудительного масштабирования)
+    std::unique_ptr<Domain> domain;
+    if (opts.domainType == DomainType::HYPERCUBE) {
+        // Вычисляем границы по минимуму и максимуму
+        double minCoord = nodes[0][0], maxCoord = nodes[0][0];
+        for (const auto& v : nodes) {
+            for (double c : v) {
+                if (c < minCoord)
+                    minCoord = c;
+                if (c > maxCoord)
+                    maxCoord = c;
+            }
+        }
+        domain = std::make_unique<HypercubeDomain>(opts.dimension, minCoord, maxCoord);
+        std::cout << "Hypercube bounds: [" << minCoord << ", " << maxCoord << "]" << std::endl;
+    } else {
+        // Для симплекса используем переданные узлы как вершины (для degree=1)
+        domain = std::make_unique<SimplexDomain>(nodes);
+        std::cout << "Simplex domain created from " << nodes.size() << " vertices" << std::endl;
+    }
+
+    // Строим базис
+    auto basis = BasisFactory::create(*domain, nodes, opts);
+
+    verifyInterpolation(*basis, nodes);
+
+    // Вычисляем константу Лебега
+    DiscreteNormCalculator calc(opts.numSamples);
+    double                 lebesgue = calc.computeNorm(*basis, *domain);
+
+    std::cout << "\nLebesgue constant (from file: " << filename
+              << ", domain: " << domainTypeToString(opts.domainType) << ", degree: " << opts.degree
+              << ", dim: " << opts.dimension << ", nodes: " << nodes.size() << "): " << lebesgue
+              << std::endl;
 }
 
 double ComputeCommand::testFunction(const Vector& x) const {

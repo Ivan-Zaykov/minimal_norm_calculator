@@ -57,9 +57,6 @@ std::unique_ptr<IBasis> BasisFactory::create(const Domain& domain, const std::ve
                 nodeVals.push_back(v[0]);
             return std::make_unique<LagrangeBasis1D>(nodeVals);
         } else {
-            if (opts.degree != 1) {
-                throw std::runtime_error("Simplex interpolation only for degree=1");
-            }
             return std::make_unique<SimplexBasis>(nodes);
         }
     }

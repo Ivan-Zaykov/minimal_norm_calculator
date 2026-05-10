@@ -12,11 +12,13 @@ struct ProgramOptions {
     CommandEnum command = CommandEnum::COMPUTE;
 
     // Общие опции
-    int        degree     = 5;
-    int        numSamples = 1000;
-    DomainType domainType = DomainType::SIMPLEX;
-    int        dimension  = 1;
-    bool       showHelp   = false;
+    int        degree          = 5;
+    int        numSamples      = 1000;
+    DomainType domainType      = DomainType::SIMPLEX;
+    int        dimension       = 1;
+    bool       showHelp        = false;
+    char       csvRowDelimiter = '\n';
+    char       csvColDelimiter = ';';
 
     // Опции для compute
     std::string nodeType = "uniform";  // "uniform", "chebyshev", "file"

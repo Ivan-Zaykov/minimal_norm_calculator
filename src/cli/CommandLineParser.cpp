@@ -81,6 +81,30 @@ void CommandLineParser::parseCommonArgs(ProgramOptions& opts, int& i, int argc, 
             std::cerr << "Error: missing value for " << arg << "\n";
             std::exit(1);
         }
+    } else if (arg == "--csv-col-delim") {
+        if (i + 1 < argc) {
+            std::string delim = argv[++i];
+            if (delim.size() == 1) {
+                opts.csvColDelimiter = delim[0];
+            } else if (delim == "tab") {
+                opts.csvColDelimiter = '\t';
+            } else {
+                std::cerr << "Error: --csv-col-delim must be a single character or 'tab'\n";
+                std::exit(1);
+            }
+        }
+    } else if (arg == "--csv-row-delim") {
+        if (i + 1 < argc) {
+            std::string delim = argv[++i];
+            if (delim == "newline") {
+                opts.csvRowDelimiter = '\n';
+            } else if (delim == "lf") {
+                opts.csvRowDelimiter = '\n';
+            } else {
+                std::cerr << "Error: --csv-row-delim only supports 'newline' or 'lf'\n";
+                std::exit(1);
+            }
+        }
     } else {
         std::cerr << "Unknown option: " << arg << "\n";
         std::exit(1);
