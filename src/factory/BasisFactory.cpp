@@ -5,6 +5,7 @@
 #include "domain/SimplexDomain.h"
 #include <stdexcept>
 #include "basis/LagrangeBasis1D.h"
+#include "basis/LagrangeBasisGeneral.h"
 
 std::unique_ptr<IBasis> BasisFactory::create(const Domain& domain, const std::vector<Vector>& nodes,
                                              const ProgramOptions& opts) {
@@ -56,8 +57,10 @@ std::unique_ptr<IBasis> BasisFactory::create(const Domain& domain, const std::ve
             for (const auto& v : nodes)
                 nodeVals.push_back(v[0]);
             return std::make_unique<LagrangeBasis1D>(nodeVals);
-        } else {
+        } else if (opts.degree == 1) {
             return std::make_unique<SimplexBasis>(nodes);
+        } else {
+            return std::make_unique<LagrangeBasisGeneral>(nodes, opts.degree);
         }
     }
 

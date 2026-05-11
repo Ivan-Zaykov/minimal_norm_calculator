@@ -29,7 +29,7 @@ std::vector<Vector> FeketeInitializer::generate(const Domain& domain, int numNod
 
     // Преобразуем в декартовы
     const auto& vertices = simplex->getVertices();
-    int         nVerts   = vertices.size();
+    size_t nVerts = vertices.size();
 
     std::vector<Vector> cartNodes;
     for (const auto& bary : baryNodes) {
