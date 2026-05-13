@@ -1,0 +1,16 @@
+# Google Style with minor adjustments
+BasedOnStyle: Google
+IndentWidth: 4
+ColumnLimit: 100
+BreakBeforeBraces: Attach
+AllowShortFunctionsOnASingleLine: None
+AllowShortLoopsOnASingleLine: false
+AllowShortIfStatementsOnASingleLine: false
+AlignAfterOpenBracket: Align
+AlignConsecutiveAssignments: true
+AlignConsecutiveDeclarations: true
+SpaceAfterCStyleCast: false
+PointerAlignment: Left
+DerivePointerAlignment: false
+IncludeBlocks: Preserve
+SortIncludes: false
