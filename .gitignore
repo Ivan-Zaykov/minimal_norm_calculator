@@ -8,6 +8,7 @@ build
 nodes/*
 
 lebesgue_debug.csv
+cmake-build-debug
 
 # Compiled Object files
 *.slo
