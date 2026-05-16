@@ -2,7 +2,7 @@
 #include <iomanip>
 #include "basis/HadamardSimplex.h"
 #include "basis/SimplexBasis.h"
-#include "optimizer/NormOptimizer.h"
+#include "optimizer/HillClimbingOptimizer.h"
 #include "optimizer/LebesgueFunction.h"
 
 int main() {
@@ -25,8 +25,8 @@ int main() {
     }
 
     std::cout << "\n=== Global optimization ===" << std::endl;
-    NormOptimizer optimizer(lebesgueFunc, dim);
-    double        minLebesgue = optimizer.optimizeGlobal(100);
+    HillClimbingOptimizer optimizer(lebesgueFunc, dim);
+    double                minLebesgue = optimizer.optimize();
 
     std::cout << std::setprecision(10);
     std::cout << "Minimum Lebesgue constant: " << minLebesgue << std::endl;
