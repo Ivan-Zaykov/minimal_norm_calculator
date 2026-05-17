@@ -1,9 +1,10 @@
-#include <iostream>
-#include <iomanip>
 #include "basis/HadamardSimplex.h"
 #include "basis/SimplexBasis.h"
-#include "optimizer/HillClimbingOptimizer.h"
 #include "optimizer/LebesgueFunction.h"
+#include "optimizer/HillClimbingOptimizer.h"
+#include "optimizer/GoogleOrToolsOptimizer.h"
+#include <iostream>
+#include <memory>
 
 int main() {
     const int dim = 31;
@@ -24,13 +25,24 @@ int main() {
         std::cout << "WARNING: Interpolation property not satisfied!" << std::endl;
     }
 
-    std::cout << "\n=== Global optimization ===" << std::endl;
-    HillClimbingOptimizer optimizer(lebesgueFunc, dim);
-    double                minLebesgue = optimizer.optimize();
+    // ИСПРАВЛЕНИЕ: Объявляем умный указатель с интерфейсным типом INormOptimizer
+    std::unique_ptr<INormOptimizer> optimizer;
 
-    std::cout << std::setprecision(10);
-    std::cout << "Minimum Lebesgue constant: " << minLebesgue << std::endl;
-    std::cout << "Theoretical upper bound √(n+1): " << std::sqrt(dim + 1) << std::endl;
+    // Опционально: запуск быстрой эвристики (если захотите сравнить)
+    /*
+    optimizer = std::make_unique<HillClimbingOptimizer>(lebesgueFunc, dim, 200);
+    double hc_res = optimizer->optimize();
+    std::cout << "Hill Climbing Max: " << hc_res << std::endl;
+    */
+
+    // Точный математический результат через OR-Tools
+    std::cout << "\n=== Starting Google OR-Tools CP-SAT Solver ===" << std::endl;
+    optimizer          = std::make_unique<GoogleOrToolsOptimizer>(basis, dim);
+    double ortools_res = optimizer->optimize();
+
+    std::cout << "\n=== RESULTS ===" << std::endl;
+    std::cout << "Google OR-Tools Max (Lebesgue Constant): " << ortools_res << std::endl;
+    std::cout << "Worst vertex coords: " << optimizer->getMaxPoint().transpose() << std::endl;
 
     return 0;
 }

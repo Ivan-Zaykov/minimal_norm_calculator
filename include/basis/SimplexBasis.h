@@ -16,4 +16,9 @@ class SimplexBasis {
     std::vector<Eigen::VectorXd> vertices_;
     int                          dim_;
     Eigen::MatrixXd              Ainv_;
+
+public:
+    [[nodiscard]] Eigen::MatrixXd getAinv() const {
+        return Ainv_;
+    }
 };

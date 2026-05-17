@@ -4,33 +4,37 @@ project(HadamardSimplex)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(dlib REQUIRED)
-# Явно укажи флаги, чтобы избежать конфликта
-add_definitions(-DDLIB_NO_GUI_SUPPORT)
+include_directories(include)
 
-# Режим сборки (по умолчанию Debug)
+# Режим сборки (по умолчанию Release, так как для 31-мерного пространства оптимизация в Debug будет медленной)
 if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE Debug CACHE STRING "Build type" FORCE)
+    set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
 endif()
 
-# Флаги отладки
+# Настройка флагов для Debug и Release
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     add_compile_options(-g -O0 -fno-inline -Wall)
+else()
+    add_compile_options(-O3 -Wall)
 endif()
 
-# Eigen
+# Находим зависимости
 find_package(Eigen3 REQUIRED)
-include_directories(${EIGEN3_INCLUDE_DIR})
-include_directories(include)
+find_package(ortools REQUIRED)
 
 # Сборка
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 add_executable(${PROJECT_NAME} ${SOURCES})
 
 target_link_libraries(${PROJECT_NAME} ${EIGEN3_LIBRARIES})
-target_link_libraries(HadamardSimplex dlib::dlib)
 
-# Форматирование кода (опционально)
+target_link_libraries(${PROJECT_NAME}
+        PRIVATE
+        Eigen3::Eigen
+        ortools::ortools
+)
+
+# Форматирование кода
 find_program(CLANG_FORMAT clang-format)
 if(CLANG_FORMAT)
     file(GLOB_RECURSE SOURCE_FILES
