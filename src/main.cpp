@@ -1,8 +1,11 @@
 #include "basis/HadamardSimplex.h"
 #include "basis/SimplexBasis.h"
+#include "optimizer/DirectCalculator.h"
 #include "optimizer/LebesgueFunction.h"
 #include "optimizer/HillClimbingOptimizer.h"
 #include "optimizer/GoogleOrToolsOptimizer.h"
+
+#include <chrono>
 #include <iostream>
 #include <memory>
 
@@ -26,7 +29,7 @@ int main() {
     }
 
     // ИСПРАВЛЕНИЕ: Объявляем умный указатель с интерфейсным типом INormOptimizer
-    std::unique_ptr<INormOptimizer> optimizer;
+    // std::unique_ptr<INormOptimizer> optimizer;
 
     // Опционально: запуск быстрой эвристики (если захотите сравнить)
     /*
@@ -36,13 +39,27 @@ int main() {
     */
 
     // Точный математический результат через OR-Tools
-    std::cout << "\n=== Starting Google OR-Tools CP-SAT Solver ===" << std::endl;
-    optimizer          = std::make_unique<GoogleOrToolsOptimizer>(basis, dim);
-    double ortools_res = optimizer->optimize();
+    // std::cout << "\n=== Starting Google OR-Tools CP-SAT Solver ===" << std::endl;
+    // optimizer          = std::make_unique<GoogleOrToolsOptimizer>(basis, dim);
+    // double ortools_res = optimizer->optimize();
+    //
+    // std::cout << "\n=== RESULTS ===" << std::endl;
+    // std::cout << "Google OR-Tools Max (Lebesgue Constant): " << ortools_res << std::endl;
+    // std::cout << "Worst vertex coords: " << optimizer->getMaxPoint().transpose() << std::endl;
+
+    // Полный перебор всех вершин гиперкуба
+    std::cout << "\n=== Starting full enumeration of hypercube vertices ===" << std::endl;
+    auto optimizer = std::make_unique<DirectCalculator>(lebesgueFunc, dim);
+
+    auto start = std::chrono::high_resolution_clock::now();
+    double maxLebesgue = optimizer->optimize();
+    auto end = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::seconds>(end - start);
 
     std::cout << "\n=== RESULTS ===" << std::endl;
-    std::cout << "Google OR-Tools Max (Lebesgue Constant): " << ortools_res << std::endl;
-    std::cout << "Worst vertex coords: " << optimizer->getMaxPoint().transpose() << std::endl;
+    std::cout << "Maximum Lebesgue constant: " << maxLebesgue << std::endl;
+    std::cout << "Found at vertex: " << optimizer->getMaxPoint().transpose() << std::endl;
+    std::cout << "Time: " << duration.count() << " seconds" << std::endl;
 
     return 0;
 }
