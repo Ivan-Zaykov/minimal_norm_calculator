@@ -17,8 +17,8 @@ SimplexBasis::SimplexBasis(const std::vector<Eigen::VectorXd>& vertices) : verti
 
     Ainv_ = A.inverse();
 
-    std::cout << "A = \n" << A << std::endl;
-    std::cout << "Ainv = \n" << Ainv_ << std::endl;
+    std::cout << "A = \n" << A << "\n" << std::endl;
+    std::cout << "Ainv = \n" << Ainv_ << "\n" << std::endl;
 }
 
 int SimplexBasis::size() const {

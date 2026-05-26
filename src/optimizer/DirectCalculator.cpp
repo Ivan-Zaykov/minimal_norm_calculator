@@ -9,6 +9,9 @@
 
 static std::mutex cout_mutex;
 
+// Константа для логирования (можно вынести в начало файла)
+const int64_t LOG_INTERVAL = 100'000;
+
 DirectCalculator::DirectCalculator(const LebesgueFunction& func, int dim)
     : func_(func),
       dim_(dim),
@@ -42,8 +45,8 @@ static void enumerateSubset(const LebesgueFunction* func, int dim, int64_t start
 
         int64_t processedCount = processed->fetch_add(1) + 1;
 
-        // Логирование каждые 100 000 итераций
-        if (processedCount - lastLogged->load() >= 100'000) {
+        // Логирование каждые LOG_INTERVAL итераций
+        if (processedCount - lastLogged->load() >= LOG_INTERVAL) {
             lastLogged->store(processedCount);
 
             double percent = 100.0 * processedCount / totalVertices;
@@ -99,7 +102,7 @@ double DirectCalculator::optimize() {
     std::cout << "Размерность: " << dim_ << std::endl;
     std::cout << "Всего вершин: " << totalVertices << " (2^" << dim_ << ")" << std::endl;
     std::cout << "Потоков: " << numThreads << std::endl;
-    std::cout << "Логирование каждые 100 000 вершин" << std::endl;
+    std::cout << "Логирование каждые " << LOG_INTERVAL << " вершин" << std::endl;
     std::cout << "=========================================" << std::endl;
 
     auto startTime = std::chrono::steady_clock::now();

@@ -8,11 +8,11 @@
 #include <memory>
 
 int main() {
-    const int dim = 31;
+    const int dim = 7;
     std::cout << "Построение симплекса на основе матрицы Адамара в R" << dim << std::endl;
 
     auto vertices = getHadamardSimplex(dim);
-    std::cout << "Число вершин симплекса: " << vertices.size() << std::endl;
+    std::cout << "Число вершин симплекса: " << vertices.size() << "\n" << std::endl;
 
     SimplexBasis     basis(vertices);
     LebesgueFunction lebesgueFunc(basis);
@@ -20,7 +20,7 @@ int main() {
     std::cout << "\n=== Проверка интерполяции ===" << std::endl;
     bool ok = SimplexBasis::verifyInterpolation(basis, 0.00001);
     if (ok) {
-        std::cout << "ВЕРНО: Интерполяционные свойства выполняются" << std::endl;
+        std::cout << "ВЕРНО: Интерполяционные свойства выполняются" << "\n" << std::endl;
     } else {
         std::cout << "ВНИМАНИЕ: Интерполяционные свойства не выполняются!" << std::endl;
     }
@@ -44,7 +44,6 @@ int main() {
     // std::cout << "Google OR-Tools Max (Lebesgue Constant): " << ortools_res << std::endl;
     // std::cout << "Worst vertex coords: " << optimizer->getMaxPoint().transpose() << std::endl;
 
-    std::cout << "\n=== Запуск полного перебора вершин гиперкуба ===" << std::endl;
     auto optimizer = std::make_unique<DirectCalculator>(lebesgueFunc, dim);
 
     auto   start       = std::chrono::high_resolution_clock::now();
