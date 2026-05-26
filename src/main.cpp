@@ -9,7 +9,7 @@
 #include <memory>
 
 int main() {
-    const int dim = 7;
+    const int dim = 31;
     std::cout << "Построение симплекса на основе матрицы Адамара в R" << dim << std::endl;
 
     auto vertices = getHadamardSimplex(dim);

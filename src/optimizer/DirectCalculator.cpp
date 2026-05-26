@@ -10,7 +10,7 @@
 static std::mutex cout_mutex;
 
 // Константа для логирования (можно вынести в начало файла)
-const int64_t LOG_INTERVAL = 100'000;
+const int64_t LOG_INTERVAL = 10'000'000;
 
 DirectCalculator::DirectCalculator(const LebesgueFunction& func, int dim)
     : func_(func),
