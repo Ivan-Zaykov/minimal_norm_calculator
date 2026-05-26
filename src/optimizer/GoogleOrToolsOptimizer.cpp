@@ -69,9 +69,9 @@ double GoogleOrToolsOptimizer::optimize() {
     // НАДЁЖНОЕ РЕШЕНИЕ: Настройка параметров поиска и потоков через Model
     // =========================================================================
     SatParameters parameters;
-    parameters.set_num_search_workers(16);      // Нагружаем ваши 16 ядер
+    parameters.set_num_search_workers(16);  // Нагружаем ваши 16 ядер
     parameters.set_log_to_stdout(true);
-    parameters.set_log_search_progress(true);    // Включаем подробные логи поиска
+    parameters.set_log_search_progress(true);  // Включаем подробные логи поиска
     parameters.set_fill_additional_solutions_in_response(true);
 
     // Вызываем функцию SolveWithParameters, передавая саму модель и объект параметров напрямую

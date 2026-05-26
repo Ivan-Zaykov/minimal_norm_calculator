@@ -3,6 +3,8 @@
 #include <vector>
 #include <Eigen/Dense>
 
+// Рекурсивное построение матрицы Адамара методом Сильвестра
+// Порядок должен быть степенью двойки (2, 4, 8, 16, 32, ...)
 Eigen::MatrixXd hadamardMatrix(int order) {
     if (order == 1) {
         Eigen::MatrixXd H(1, 1);
@@ -12,8 +14,8 @@ Eigen::MatrixXd hadamardMatrix(int order) {
 
     if (order <= 0 || (order & (order - 1)) != 0) {
         throw std::runtime_error(
-            " Sylvester's construction requires order to be a power of 2 (e.g., 2, 4, 8, 16...). "
-            "Got: " +
+            "Метод Сильвестра требует, чтобы порядок был степенью двойки (2, 4, 8, 16, ...). "
+            "Получено: " +
             std::to_string(order));
     }
 
@@ -33,7 +35,7 @@ std::vector<Eigen::VectorXd> getHadamardSimplex(int dim) {
     int             order = dim + 1;
     Eigen::MatrixXd H     = hadamardMatrix(order);
 
-    std::cout << "H = \n" << H << "\n" << std::endl;
+    std::cout << "Матрица Адамара H:\n" << H << "\n" << std::endl;
 
     std::vector<Eigen::VectorXd> vertices;
     vertices.reserve(order);
@@ -42,13 +44,13 @@ std::vector<Eigen::VectorXd> getHadamardSimplex(int dim) {
         Eigen::VectorXd v(dim);
         for (int j = 0; j < dim; ++j) {
             // Преобразуем -1 → 0, 1 → 1
-            double val = H(i, j + 1);        // было -1 или 1
-            v(j)       = (val + 1.0) / 2.0;  // теперь 0 или 1
+            double val = H(i, j + 1);
+            v(j)       = (val + 1.0) / 2.0;
         }
         vertices.push_back(v);
     }
 
-    std::cout << "Vertices: " << std::endl;
+    std::cout << "Вершины симплекса:" << std::endl;
     for (size_t i = 0; i < vertices.size(); ++i) {
         std::cout << "v[" << i << "]: " << vertices[i].transpose() << std::endl;
     }

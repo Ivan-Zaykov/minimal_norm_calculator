@@ -2,19 +2,18 @@
 #include "optimizer/INormOptimizer.h"
 #include "optimizer/LebesgueFunction.h"
 #include <atomic>
-#include <vector>
 
 class DirectCalculator : public INormOptimizer {
-public:
+   public:
     DirectCalculator(const LebesgueFunction& func, int dim);
 
-    double optimize();
+    double optimize() override;
 
-    [[nodiscard]] Eigen::VectorXd getMaxPoint() const {
+    [[nodiscard]] Eigen::VectorXd getMaxPoint() const override {
         return maxPoint_;
     }
 
-private:
+   private:
     const LebesgueFunction& func_;
     int                     dim_;
     Eigen::VectorXd         maxPoint_;
