@@ -20,8 +20,6 @@ endif()
 
 # Находим зависимости
 find_package(Eigen3 REQUIRED)
-find_package(ortools REQUIRED)
-
 # Сборка
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 add_executable(${PROJECT_NAME} ${SOURCES})
@@ -31,7 +29,6 @@ target_link_libraries(${PROJECT_NAME} ${EIGEN3_LIBRARIES})
 target_link_libraries(${PROJECT_NAME}
         PRIVATE
         Eigen3::Eigen
-        ortools::ortools
 )
 
 # Форматирование кода
