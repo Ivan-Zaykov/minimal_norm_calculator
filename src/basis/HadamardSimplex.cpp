@@ -32,7 +32,7 @@ Eigen::MatrixXd hadamardMatrix(int order) {
 }
 
 Eigen::MatrixXd hadamardTo01Matrix(const Eigen::MatrixXd& H) {
-    int n = H.rows();
+    int             n = H.rows();
     Eigen::MatrixXd B = H;
 
     // Шаг 1: каждый столбец, начинающийся с -1, умножается на -1
@@ -56,13 +56,13 @@ Eigen::MatrixXd hadamardTo01Matrix(const Eigen::MatrixXd& H) {
     // После шагов 1-2 первый столбец и первая строка состоят из 1
     // Шаг 3: берём подматрицу C (строки и столбцы с номерами 2,...,n)
     // и заменяем: 1 → 0, -1 → 1
-    int dim = n - 1;
+    int             dim = n - 1;
     Eigen::MatrixXd D(dim, dim);
 
     for (int i = 0; i < dim; ++i) {
         for (int j = 0; j < dim; ++j) {
             double val = B(i + 1, j + 1);
-            D(i, j) = (val == -1.0) ? 1.0 : 0.0;
+            D(i, j)    = (val == -1.0) ? 1.0 : 0.0;
         }
     }
 
@@ -78,7 +78,7 @@ std::vector<Eigen::VectorXd> getHadamardSimplex(int dim) {
     // Определитель исходной матрицы (должен быть ±order^(order/2) = ±4096 (8^4 для 8))
     double detH = H.determinant();
     std::cout << "det(H) = " << detH << std::endl;
-    std::cout << "Теоретическое значение: ±" << std::pow(order, order/2) << "\n" << std::endl;
+    std::cout << "Теоретическое значение: ±" << std::pow(order, order / 2) << "\n" << std::endl;
 
     Eigen::MatrixXd D = hadamardTo01Matrix(H);
 

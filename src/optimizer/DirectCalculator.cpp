@@ -49,18 +49,21 @@ static void enumerateSubset(const LebesgueFunction* func, int dim, int64_t start
         if (processedCount - lastLogged->load() >= LOG_INTERVAL) {
             lastLogged->store(processedCount);
 
-            double percent = 100.0 * processedCount / totalVertices;
-            auto   now     = std::chrono::steady_clock::now();
-            auto   elapsed =
+            double percent =
+                100.0 * static_cast<double>(processedCount) / static_cast<double>(totalVertices);
+            auto now = std::chrono::steady_clock::now();
+            auto elapsed =
                 std::chrono::duration_cast<std::chrono::seconds>(now - startTime).count();
             auto elapsed_us =
                 std::chrono::duration_cast<std::chrono::microseconds>(now - startTime).count();
 
             // Время одной итерации (микросекунды)
-            double us_per_iter = static_cast<double>(elapsed_us) / processedCount;
+            double us_per_iter =
+                static_cast<double>(elapsed_us) / static_cast<double>(processedCount);
 
             // Скорость обработки (вершин в секунду)
-            double vertices_per_sec = static_cast<double>(processedCount) / elapsed;
+            double vertices_per_sec =
+                (elapsed > 0) ? static_cast<double>(processedCount) / elapsed : 0.0;
 
             // Оценка оставшегося времени
             double remaining_sec = 0.0;
@@ -129,9 +132,15 @@ double DirectCalculator::optimize() {
     std::cout << "\n=== Перебор завершён ===" << std::endl;
     std::cout << "Время: " << duration.count() << " секунд" << std::endl;
     std::cout << "Обработано вершин: " << processedVertices_.load() << std::endl;
-    std::cout << "Средняя скорость: " << std::fixed << std::setprecision(0)
-              << static_cast<double>(processedVertices_.load()) / duration.count() << " в/сек"
+
+    double avgSpeed = 0.0;
+    if (duration.count() > 0) {
+        avgSpeed = static_cast<double>(processedVertices_.load()) / duration.count();
+    }
+    std::cout << "Средняя скорость: " << std::fixed << std::setprecision(0) << avgSpeed << " в/сек"
               << std::endl;
+
+    std::cout << std::fixed << std::setprecision(3);
     std::cout << "Максимальная константа Лебега: " << globalMax_.load() << std::endl;
 
     int64_t bestIdx = currentBestVertex_.load();

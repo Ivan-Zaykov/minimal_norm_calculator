@@ -4,6 +4,7 @@
 #include "optimizer/LebesgueFunction.h"
 
 #include <chrono>
+#include <iomanip>
 #include <iostream>
 #include <memory>
 
@@ -53,7 +54,11 @@ int main() {
 
     std::cout << "\n=== РЕЗУЛЬТАТЫ ===" << std::endl;
     std::cout << "Максимальная константа Лебега: " << maxLebesgue << std::endl;
+
+    std::cout << std::fixed << std::setprecision(0);
     std::cout << "Найдена в вершине: " << optimizer->getMaxPoint().transpose() << std::endl;
+
+    std::cout << std::fixed << std::setprecision(3);
     std::cout << "Время выполнения: " << duration.count() << " секунд" << std::endl;
 
     return 0;
