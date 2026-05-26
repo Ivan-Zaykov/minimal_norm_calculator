@@ -4,13 +4,9 @@
 #include <iostream>
 #include <iomanip>
 #include <chrono>
-#include <cmath>
 #include <mutex>
 
 static std::mutex cout_mutex;
-
-// Константа для логирования (можно вынести в начало файла)
-const int64_t LOG_INTERVAL = 10'000'000;
 
 DirectCalculator::DirectCalculator(const LebesgueFunction& func, int dim)
     : func_(func),
@@ -18,14 +14,31 @@ DirectCalculator::DirectCalculator(const LebesgueFunction& func, int dim)
       globalMax_(0.0),
       processedVertices_(0),
       lastLogged_(0),
-      currentBestVertex_(0) {
+      currentBestVertex_(0),
+      startVertex_(0),
+      endVertex_(0),
+      partial_(false) {
+    maxPoint_ = Eigen::VectorXd::Zero(dim_);
+}
+
+DirectCalculator::DirectCalculator(const LebesgueFunction& func, int dim, int64_t startVertex,
+                                   int64_t endVertex)
+    : func_(func),
+      dim_(dim),
+      globalMax_(0.0),
+      processedVertices_(0),
+      lastLogged_(0),
+      currentBestVertex_(0),
+      startVertex_(startVertex),
+      endVertex_(endVertex),
+      partial_(true) {
     maxPoint_ = Eigen::VectorXd::Zero(dim_);
 }
 
 static void enumerateSubset(const LebesgueFunction* func, int dim, int64_t start, int64_t end,
                             std::atomic<double>* globalMax, std::atomic<int64_t>* processed,
                             std::atomic<int64_t>* lastLogged, std::atomic<int64_t>* bestVertex,
-                            int64_t                               totalVertices,
+                            int64_t totalVertices, int64_t logInterval,
                             std::chrono::steady_clock::time_point startTime) {
     double  localMax        = 0.0;
     int64_t localBestVertex = 0;
@@ -45,8 +58,8 @@ static void enumerateSubset(const LebesgueFunction* func, int dim, int64_t start
 
         int64_t processedCount = processed->fetch_add(1) + 1;
 
-        // Логирование каждые LOG_INTERVAL итераций
-        if (processedCount - lastLogged->load() >= LOG_INTERVAL) {
+        // Логирование каждые logInterval итераций
+        if (processedCount - lastLogged->load() >= logInterval) {
             lastLogged->store(processedCount);
 
             double percent =
@@ -57,15 +70,11 @@ static void enumerateSubset(const LebesgueFunction* func, int dim, int64_t start
             auto elapsed_us =
                 std::chrono::duration_cast<std::chrono::microseconds>(now - startTime).count();
 
-            // Время одной итерации (микросекунды)
             double us_per_iter =
-                static_cast<double>(elapsed_us) / static_cast<double>(processedCount);
-
-            // Скорость обработки (вершин в секунду)
+                (processedCount > 0) ? static_cast<double>(elapsed_us) / processedCount : 0.0;
             double vertices_per_sec =
                 (elapsed > 0) ? static_cast<double>(processedCount) / elapsed : 0.0;
 
-            // Оценка оставшегося времени
             double remaining_sec = 0.0;
             if (processedCount > 0) {
                 remaining_sec = static_cast<double>(elapsed) * (totalVertices - processedCount) /
@@ -96,14 +105,23 @@ static void enumerateSubset(const LebesgueFunction* func, int dim, int64_t start
 }
 
 double DirectCalculator::optimize() {
-    int64_t totalVertices = 1LL << dim_;
-    int     numThreads    = std::thread::hardware_concurrency();
+    int64_t totalVertices = partial_ ? (endVertex_ - startVertex_) : (1LL << dim_);
+    int64_t startOffset   = partial_ ? startVertex_ : 0;
+
+    int numThreads = std::thread::hardware_concurrency();
     if (numThreads == 0)
         numThreads = 8;
 
-    std::cout << "=== Полный перебор вершин гиперкуба ===" << std::endl;
-    std::cout << "Размерность: " << dim_ << std::endl;
-    std::cout << "Всего вершин: " << totalVertices << " (2^" << dim_ << ")" << std::endl;
+    if (!partial_) {
+        std::cout << "=== Полный перебор вершин гиперкуба ===" << std::endl;
+        std::cout << "Размерность: " << dim_ << std::endl;
+        std::cout << "Всего вершин: " << totalVertices << " (2^" << dim_ << ")" << std::endl;
+    } else {
+        std::cout << "=== Частичный перебор вершин гиперкуба ===" << std::endl;
+        std::cout << "Размерность: " << dim_ << std::endl;
+        std::cout << "Диапазон: [" << startVertex_ << ", " << endVertex_ << ")" << std::endl;
+        std::cout << "Всего вершин: " << totalVertices << std::endl;
+    }
     std::cout << "Потоков: " << numThreads << std::endl;
     std::cout << "Логирование каждые " << LOG_INTERVAL << " вершин" << std::endl;
     std::cout << "=========================================" << std::endl;
@@ -114,12 +132,12 @@ double DirectCalculator::optimize() {
     std::vector<std::thread> threads;
 
     for (int t = 0; t < numThreads; ++t) {
-        int64_t start = t * chunkSize;
-        int64_t end   = (t == numThreads - 1) ? totalVertices : start + chunkSize;
+        int64_t start = startOffset + t * chunkSize;
+        int64_t end   = (t == numThreads - 1) ? startOffset + totalVertices : start + chunkSize;
 
         threads.emplace_back(enumerateSubset, &func_, dim_, start, end, &globalMax_,
                              &processedVertices_, &lastLogged_, &currentBestVertex_, totalVertices,
-                             startTime);
+                             LOG_INTERVAL, startTime);
     }
 
     for (auto& th : threads) {

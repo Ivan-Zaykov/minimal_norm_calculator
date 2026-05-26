@@ -7,9 +7,43 @@
 #include <iomanip>
 #include <iostream>
 #include <memory>
+#include <string>
 
-int main() {
+int main(int argc, char* argv[]) {
     const int dim = 31;
+
+    // Параметры частичного перебора по умолчанию (полный перебор)
+    int64_t startVertex = 0;
+    int64_t endVertex   = 1LL << dim;
+    bool    partial     = false;
+
+    if (argc >= 3) {
+        std::string mode = argv[1];
+        if (mode == "range" && argc >= 4) {
+            startVertex = std::stoll(argv[2]);
+            endVertex   = std::stoll(argv[3]);
+            partial     = true;
+            std::cout << "Режим: частичный перебор" << std::endl;
+            std::cout << "Диапазон вершин: [" << startVertex << ", " << endVertex << ")"
+                      << std::endl;
+        } else if (mode == "part" && argc >= 4) {
+            int     part          = std::stoi(argv[2]);
+            int     totalParts    = std::stoi(argv[3]);
+            int64_t totalVertices = 1LL << dim;
+            int64_t partSize      = totalVertices / totalParts;
+            startVertex           = (part - 1) * partSize;
+            endVertex             = (part == totalParts) ? totalVertices : startVertex + partSize;
+            partial               = true;
+            std::cout << "Режим: часть " << part << " из " << totalParts << std::endl;
+            std::cout << "Диапазон вершин: [" << startVertex << ", " << endVertex << ")"
+                      << std::endl;
+        }
+    }
+
+    if (!partial) {
+        std::cout << "Режим: полный перебор всех вершин" << std::endl;
+    }
+
     std::cout << "Построение симплекса на основе матрицы Адамара в R" << dim << std::endl;
 
     auto vertices = getHadamardSimplex(dim);
@@ -26,26 +60,13 @@ int main() {
         std::cout << "ВНИМАНИЕ: Интерполяционные свойства не выполняются!" << std::endl;
     }
 
-    // ИСПРАВЛЕНИЕ: Объявляем умный указатель с интерфейсным типом INormOptimizer
-    // std::unique_ptr<INormOptimizer> optimizer;
-
-    // Опционально: запуск быстрой эвристики (если захотите сравнить)
-    /*
-    optimizer = std::make_unique<HillClimbingOptimizer>(lebesgueFunc, dim, 200);
-    double hc_res = optimizer->optimize();
-    std::cout << "Hill Climbing Max: " << hc_res << std::endl;
-    */
-
-    // Точный математический результат через OR-Tools
-    // std::cout << "\n=== Starting Google OR-Tools CP-SAT Solver ===" << std::endl;
-    // optimizer          = std::make_unique<GoogleOrToolsOptimizer>(basis, dim);
-    // double ortools_res = optimizer->optimize();
-    //
-    // std::cout << "\n=== RESULTS ===" << std::endl;
-    // std::cout << "Google OR-Tools Max (Lebesgue Constant): " << ortools_res << std::endl;
-    // std::cout << "Worst vertex coords: " << optimizer->getMaxPoint().transpose() << std::endl;
-
-    auto optimizer = std::make_unique<DirectCalculator>(lebesgueFunc, dim);
+    // Создаём оптимизатор (полный или частичный)
+    std::unique_ptr<DirectCalculator> optimizer;
+    if (partial) {
+        optimizer = std::make_unique<DirectCalculator>(lebesgueFunc, dim, startVertex, endVertex);
+    } else {
+        optimizer = std::make_unique<DirectCalculator>(lebesgueFunc, dim);
+    }
 
     auto   start       = std::chrono::high_resolution_clock::now();
     double maxLebesgue = optimizer->optimize();
@@ -53,12 +74,20 @@ int main() {
     auto   duration    = std::chrono::duration_cast<std::chrono::seconds>(end - start);
 
     std::cout << "\n=== РЕЗУЛЬТАТЫ ===" << std::endl;
-    std::cout << "Максимальная константа Лебега: " << maxLebesgue << std::endl;
-
-    std::cout << std::fixed << std::setprecision(0);
-    std::cout << "Найдена в вершине: " << optimizer->getMaxPoint().transpose() << std::endl;
 
     std::cout << std::fixed << std::setprecision(3);
+    std::cout << "Максимальная константа Лебега: " << maxLebesgue << std::endl;
+
+    Eigen::VectorXd maxPoint = optimizer->getMaxPoint();
+    std::cout << "Найдена в вершине: [";
+    for (int i = 0; i < maxPoint.size(); ++i) {
+        std::cout << static_cast<int>(maxPoint(i) + 0.5);
+        if (i + 1 < maxPoint.size())
+            std::cout << " ";
+    }
+    std::cout << "]" << std::endl;
+
+    std::cout << std::fixed << std::setprecision(0);
     std::cout << "Время выполнения: " << duration.count() << " секунд" << std::endl;
 
     return 0;
