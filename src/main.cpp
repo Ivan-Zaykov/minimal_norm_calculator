@@ -87,6 +87,19 @@ int main(int argc, char* argv[]) {
     }
     std::cout << "]" << std::endl;
 
+    // ПОВТОРНАЯ ПРОВЕРКА: вычисляем значение в найденной вершине
+    double verifyValue = lebesgueFunc(maxPoint);
+    std::cout << std::fixed << std::setprecision(10);
+    std::cout << "Повторная проверка: " << verifyValue << std::endl;
+
+    // Сравнение
+    double diff = std::abs(maxLebesgue - verifyValue);
+    if (diff < 1e-6) {
+        std::cout << "Проверка пройдена: значения совпадают" << std::endl;
+    } else {
+        std::cout << "ВНИМАНИЕ: расхождение " << diff << std::endl;
+    }
+
     std::cout << std::fixed << std::setprecision(0);
     std::cout << "Время выполнения: " << duration.count() << " секунд" << std::endl;
 
