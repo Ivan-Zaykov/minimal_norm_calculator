@@ -17,7 +17,7 @@ class SimplexBasis {
     int                          dim_;
     Eigen::MatrixXd              Ainv_;
 
-public:
+   public:
     [[nodiscard]] Eigen::MatrixXd getAinv() const {
         return Ainv_;
     }
