@@ -29,14 +29,14 @@ double SimplexBasis::value(int i, const Eigen::VectorXd& x) const {
     if (x.size() != dim_)
         throw std::runtime_error("Несоответствие размерности точки");
 
-    Eigen::VectorXd aug(dim_ + 1);
+    Eigen::RowVectorXd aug(dim_ + 1);
     for (int k = 0; k < dim_; ++k)
         aug(k) = x(k);
     aug(dim_) = 1.0;
 
     double res = 0.0;
     for (int k = 0; k <= dim_; ++k) {
-        res += Ainv_(k, i) * aug(k);
+        res += aug(k) * Ainv_(k, i);
     }
     return res;
 }
