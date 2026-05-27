@@ -51,9 +51,19 @@ static void enumerateSubset(const LebesgueFunction* func, int dim, int64_t start
 
         double val = (*func)(x);
 
+        // Обновляем локальный и глобальный максимум сразу при нахождении лучшей вершины
         if (val > localMax) {
             localMax        = val;
             localBestVertex = idx;
+
+            double currentMax = globalMax->load();
+            while (localMax > currentMax) {
+                if (globalMax->compare_exchange_weak(currentMax, localMax)) {
+                    bestVertex->store(localBestVertex);
+                    break;
+                }
+                currentMax = globalMax->load();  // Перечитываем при неудаче из-за другого потока
+            }
         }
 
         int64_t processedCount = processed->fetch_add(1) + 1;
@@ -91,15 +101,7 @@ static void enumerateSubset(const LebesgueFunction* func, int dim, int64_t start
                       << " | Скорость: " << std::setprecision(0) << vertices_per_sec << " в/сек"
                       << " | мкс/итер: " << std::setprecision(2) << us_per_iter
                       << " | Осталось ≈: " << static_cast<int>(remaining_sec) << " сек"
-                      << " | Текущий максимум: " << globalMax->load() << std::endl;
-        }
-    }
-
-    double currentMax = globalMax->load();
-    while (localMax > currentMax) {
-        if (globalMax->compare_exchange_weak(currentMax, localMax)) {
-            bestVertex->store(localBestVertex);
-            break;
+                      << " | Текущее: " << val << " | Рекорд: " << globalMax->load() << std::endl;
         }
     }
 }
