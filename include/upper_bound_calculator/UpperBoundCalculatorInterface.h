@@ -1,12 +1,12 @@
 #pragma once
 #include <Eigen/Dense>
 
-class INormOptimizer {
+class UpperBoundCalculatorInterface {
    public:
-    virtual ~INormOptimizer() = default;
+    virtual ~UpperBoundCalculatorInterface() = default;
 
     // Запуск оптимизации. Возвращает максимальное значение функции
-    virtual double optimize() = 0;
+    virtual double calculate() = 0;
 
     // Возвращает точку куба, на которой достигнут максимум
     [[nodiscard]] virtual Eigen::RowVectorXd getMaxPoint() const = 0;

@@ -1,6 +1,6 @@
 #include "basis/SimplexBasis.h"
-#include "optimizer/DirectCalculator.h"
-#include "optimizer/LebesgueFunction.h"
+#include "../include/upper_bound_calculator/FullEnumUpperBoundCalculator.h"
+#include "../include/upper_bound_calculator/LebesgueFunction.h"
 #include "cli/CommandLineParser.h"
 #include "factory/SimplexProviderFactory.h"
 #include <chrono>
@@ -61,15 +61,15 @@ int main(int argc, char* argv[]) {
     }
 
     // Создаём оптимизатор (полный или частичный)
-    std::unique_ptr<DirectCalculator> optimizer;
+    std::unique_ptr<FullEnumUpperBoundCalculator> upper_bound_calculator;
     if (opts.partial) {
-        optimizer = std::make_unique<DirectCalculator>(lebesgueFunc, opts.dimension, opts.startVertex, opts.endVertex);
+        upper_bound_calculator = std::make_unique<FullEnumUpperBoundCalculator>(lebesgueFunc, opts.dimension, opts.startVertex, opts.endVertex);
     } else {
-        optimizer = std::make_unique<DirectCalculator>(lebesgueFunc, opts.dimension);
+        upper_bound_calculator = std::make_unique<FullEnumUpperBoundCalculator>(lebesgueFunc, opts.dimension);
     }
 
     auto start = std::chrono::high_resolution_clock::now();
-    double maxLebesgue = optimizer->optimize();
+    double maxLebesgue = upper_bound_calculator->calculate();
     auto end = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::seconds>(end - start);
 
@@ -78,7 +78,7 @@ int main(int argc, char* argv[]) {
     std::cout << std::fixed << std::setprecision(3);
     std::cout << "Максимальная константа Лебега: " << maxLebesgue << std::endl;
 
-    Eigen::RowVectorXd maxPoint = optimizer->getMaxPoint();
+    Eigen::RowVectorXd maxPoint = upper_bound_calculator->getMaxPoint();
     std::cout << "Найдена в вершине: [";
     for (int i = 0; i < maxPoint.size(); ++i) {
         std::cout << static_cast<int>(maxPoint(i) + 0.5);

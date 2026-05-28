@@ -1,17 +1,17 @@
 #pragma once
-#include "optimizer/INormOptimizer.h"
-#include "optimizer/LebesgueFunction.h"
+#include "upper_bound_calculator/UpperBoundCalculatorInterface.h"
+#include "upper_bound_calculator/LebesgueFunction.h"
 #include <atomic>
 #include <Eigen/Dense>
 
-class DirectCalculator : public INormOptimizer {
+class FullEnumUpperBoundCalculator : public UpperBoundCalculatorInterface {
    public:
-    DirectCalculator(const LebesgueFunction& func, int dim);
+    FullEnumUpperBoundCalculator(const LebesgueFunction& func, int dim);
 
-    DirectCalculator(const LebesgueFunction& func, int dim, int64_t startVertex, int64_t endVertex);
+    FullEnumUpperBoundCalculator(const LebesgueFunction& func, int dim, int64_t startVertex, int64_t endVertex);
 
     // Запуск перебора. Возвращает максимальное значение константы Лебега
-    double optimize() override;
+    double calculate() override;
 
     [[nodiscard]] Eigen::RowVectorXd getMaxPoint() const override {
         return maxPoint_;

@@ -1,4 +1,4 @@
-#include "optimizer/LebesgueFunction.h"
+#include "upper_bound_calculator/LebesgueFunction.h"
 #include <cmath>
 
 LebesgueFunction::LebesgueFunction(const SimplexBasis& basis) : basis_(basis) {

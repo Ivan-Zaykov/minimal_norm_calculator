@@ -1,4 +1,4 @@
-#include "optimizer/DirectCalculator.h"
+#include "upper_bound_calculator/FullEnumUpperBoundCalculator.h"
 #include <thread>
 #include <vector>
 #include <iostream>
@@ -8,7 +8,7 @@
 
 static std::mutex cout_mutex;
 
-DirectCalculator::DirectCalculator(const LebesgueFunction& func, int dim)
+FullEnumUpperBoundCalculator::FullEnumUpperBoundCalculator(const LebesgueFunction& func, int dim)
     : func_(func),
       dim_(dim),
       globalMax_(0.0),
@@ -21,7 +21,7 @@ DirectCalculator::DirectCalculator(const LebesgueFunction& func, int dim)
     maxPoint_ = Eigen::RowVectorXd::Zero(dim_);
 }
 
-DirectCalculator::DirectCalculator(const LebesgueFunction& func, int dim, int64_t startVertex,
+FullEnumUpperBoundCalculator::FullEnumUpperBoundCalculator(const LebesgueFunction& func, int dim, int64_t startVertex,
                                    int64_t endVertex)
     : func_(func),
       dim_(dim),
@@ -106,7 +106,7 @@ static void enumerateSubset(const LebesgueFunction* func, int dim, int64_t start
     }
 }
 
-double DirectCalculator::optimize() {
+double FullEnumUpperBoundCalculator::calculate() {
     int64_t totalVertices = partial_ ? (endVertex_ - startVertex_) : (1LL << dim_);
     int64_t startOffset   = partial_ ? startVertex_ : 0;
 
