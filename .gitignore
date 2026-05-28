@@ -10,6 +10,9 @@ nodes/*
 lebesgue_debug.csv
 cmake-build-debug
 
+input/*
+output/*
+
 # Compiled Object files
 *.slo
 *.lo
