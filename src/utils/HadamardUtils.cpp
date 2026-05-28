@@ -100,3 +100,40 @@ std::vector<Eigen::RowVectorXd> HadamardUtils::getVerticesWithLogging(const Eige
 
     return vertices;
 }
+
+bool HadamardUtils::isHadamardMatrix(const Eigen::MatrixXd& H, double tolerance) {
+    int n = H.rows();
+
+    // Шаг 1: проверка квадратности
+    if (H.cols() != n) {
+        std::cerr << "Ошибка: матрица не квадратная" << std::endl;
+        return false;
+    }
+
+    // Шаг 2: проверка элементов (±1)
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
+            double val = std::abs(H(i, j));
+            if (std::abs(val - 1.0) > tolerance) {
+                std::cerr << "Ошибка: элемент [" << i << "][" << j << "] = "
+                          << H(i, j) << " не равен ±1" << std::endl;
+                return false;
+            }
+        }
+    }
+
+    // Шаг 3: проверка ортогональности строк (H * H^T = n * I)
+    Eigen::MatrixXd HHT = H * H.transpose();
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
+            double expected = (i == j) ? n : 0.0;
+            if (std::abs(HHT(i, j) - expected) > tolerance) {
+                std::cerr << "Ошибка: (H*H^T)[" << i << "][" << j << "] = "
+                          << HHT(i, j) << ", ожидается " << expected << std::endl;
+                return false;
+            }
+        }
+    }
+
+    return true;
+}

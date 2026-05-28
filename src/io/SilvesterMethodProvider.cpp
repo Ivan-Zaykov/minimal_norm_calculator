@@ -7,6 +7,10 @@
 SilvesterMethodProvider::SilvesterMethodProvider(int dim) : dim_(dim) {
     int order = dim + 1;
     H_ = hadamardMatrix(order);
+
+    if (!HadamardUtils::isHadamardMatrix(H_)) {
+        throw std::runtime_error("Созданная алгоритмом матрица не является матрицей Адамара!");
+    }
 }
 
 Eigen::MatrixXd SilvesterMethodProvider::hadamardMatrix(int order) {

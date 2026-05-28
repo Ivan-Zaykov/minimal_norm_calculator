@@ -34,6 +34,12 @@ HadamardFileProvider::HadamardFileProvider(const std::string& filename)
     }
 
     dim_ = order - 1;
+
+    if (!HadamardUtils::isHadamardMatrix(H_)) {
+        throw std::runtime_error("Загруженная матрица не является матрицей Адамара!");
+    }
+
+    std::cout << "Матрица Адамара порядка " << order << " успешно загружена и проверена" << std::endl;
 }
 
 std::vector<Eigen::RowVectorXd> HadamardFileProvider::getVertices() {
