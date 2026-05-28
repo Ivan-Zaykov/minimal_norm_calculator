@@ -1,4 +1,5 @@
 #pragma once
+#include "SilvesterMethodProvider.h"
 #include "io/ISimplexProvider.h"
 #include <string>
 
@@ -9,6 +10,7 @@ public:
     int getDimension() const override { return dim_; }
 
 private:
+    Eigen::MatrixXd H_;
     std::string filename_;
     int dim_;
 };
