@@ -13,14 +13,14 @@ class DirectCalculator : public INormOptimizer {
     // Запуск перебора. Возвращает максимальное значение константы Лебега
     double optimize() override;
 
-    [[nodiscard]] Eigen::VectorXd getMaxPoint() const override {
+    [[nodiscard]] Eigen::RowVectorXd getMaxPoint() const override {
         return maxPoint_;
     }
 
    private:
     const LebesgueFunction& func_;
     int                     dim_;
-    Eigen::VectorXd         maxPoint_;
+    Eigen::RowVectorXd         maxPoint_;
     std::atomic<double>     globalMax_;
     std::atomic<int64_t>    processedVertices_;
     std::atomic<int64_t>    lastLogged_;

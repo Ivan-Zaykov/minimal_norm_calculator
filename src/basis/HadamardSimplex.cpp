@@ -69,7 +69,7 @@ Eigen::MatrixXd hadamardTo01Matrix(const Eigen::MatrixXd& H) {
     return D;
 }
 
-std::vector<Eigen::VectorXd> getHadamardSimplex(int dim) {
+std::vector<Eigen::RowVectorXd> getHadamardSimplex(int dim) {
     int             order = dim + 1;
     Eigen::MatrixXd H     = hadamardMatrix(order);
 
@@ -92,21 +92,21 @@ std::vector<Eigen::VectorXd> getHadamardSimplex(int dim) {
     double expectedDet = std::abs(detH) / std::pow(2.0, dim);
     std::cout << "Теоретическое значение: ±" << expectedDet << "\n" << std::endl;
 
-    std::vector<Eigen::VectorXd> vertices;
+    std::vector<Eigen::RowVectorXd> vertices;
     vertices.reserve(order);
 
-    Eigen::VectorXd zero(dim);
+    Eigen::RowVectorXd zero(dim);
     zero.setZero();
     vertices.push_back(zero);
 
     for (int i = 0; i < dim; ++i) {
-        Eigen::VectorXd v = D.row(i);
+        Eigen::RowVectorXd v = D.row(i);
         vertices.push_back(v);
     }
 
     std::cout << "Вершины симплекса:" << std::endl;
     for (size_t i = 0; i < vertices.size(); ++i) {
-        std::cout << "v[" << i << "]: " << vertices[i].transpose() << std::endl;
+        std::cout << "v[" << i << "]: " << vertices[i] << std::endl;
     }
 
     return vertices;

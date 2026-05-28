@@ -4,4 +4,4 @@
 
 Eigen::MatrixXd hadamardMatrix(int order);
 
-std::vector<Eigen::VectorXd> getHadamardSimplex(int dim);
+std::vector<Eigen::RowVectorXd> getHadamardSimplex(int dim);

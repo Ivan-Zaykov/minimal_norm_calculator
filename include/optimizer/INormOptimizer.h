@@ -9,5 +9,5 @@ class INormOptimizer {
     virtual double optimize() = 0;
 
     // Возвращает точку куба, на которой достигнут максимум
-    [[nodiscard]] virtual Eigen::VectorXd getMaxPoint() const = 0;
+    [[nodiscard]] virtual Eigen::RowVectorXd getMaxPoint() const = 0;
 };

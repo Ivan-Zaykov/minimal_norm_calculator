@@ -18,7 +18,7 @@ DirectCalculator::DirectCalculator(const LebesgueFunction& func, int dim)
       startVertex_(0),
       endVertex_(0),
       partial_(false) {
-    maxPoint_ = Eigen::VectorXd::Zero(dim_);
+    maxPoint_ = Eigen::RowVectorXd::Zero(dim_);
 }
 
 DirectCalculator::DirectCalculator(const LebesgueFunction& func, int dim, int64_t startVertex,
@@ -32,7 +32,7 @@ DirectCalculator::DirectCalculator(const LebesgueFunction& func, int dim, int64_
       startVertex_(startVertex),
       endVertex_(endVertex),
       partial_(true) {
-    maxPoint_ = Eigen::VectorXd::Zero(dim_);
+    maxPoint_ = Eigen::RowVectorXd::Zero(dim_);
 }
 
 static void enumerateSubset(const LebesgueFunction* func, int dim, int64_t start, int64_t end,
@@ -44,7 +44,7 @@ static void enumerateSubset(const LebesgueFunction* func, int dim, int64_t start
     int64_t localBestVertex = 0;
 
     for (int64_t idx = start; idx < end; ++idx) {
-        Eigen::VectorXd x(dim);
+        Eigen::RowVectorXd x(dim);
         for (int i = 0; i < dim; ++i) {
             x(i) = ((idx >> i) & 1) ? 1.0 : 0.0;
         }

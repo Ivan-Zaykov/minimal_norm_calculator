@@ -79,7 +79,7 @@ int main(int argc, char* argv[]) {
     std::cout << std::fixed << std::setprecision(3);
     std::cout << "Максимальная константа Лебега: " << maxLebesgue << std::endl;
 
-    Eigen::VectorXd maxPoint = optimizer->getMaxPoint();
+    Eigen::RowVectorXd maxPoint = optimizer->getMaxPoint();
     std::cout << "Найдена в вершине: [";
     for (int i = 0; i < maxPoint.size(); ++i) {
         std::cout << static_cast<int>(maxPoint(i) + 0.5);
