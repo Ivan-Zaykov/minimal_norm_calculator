@@ -4,6 +4,8 @@
 
 class HadamardUtils {
 public:
+    static std::vector<Eigen::RowVectorXd> getVerticesWithLogging(const Eigen::MatrixXd& H, int dim);
+private:
     // Преобразование матрицы Адамара в (0/1)-матрицу D
     static Eigen::MatrixXd hadamardTo01Matrix(const Eigen::MatrixXd& H);
 

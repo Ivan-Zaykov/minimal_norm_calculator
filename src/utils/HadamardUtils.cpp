@@ -1,5 +1,7 @@
 #include "utils/HadamardUtils.h"
 
+#include <iostream>
+
 Eigen::MatrixXd HadamardUtils::hadamardTo01Matrix(const Eigen::MatrixXd& H) {
     int n = H.rows();
     Eigen::MatrixXd B = H;
@@ -51,6 +53,49 @@ std::vector<Eigen::RowVectorXd> HadamardUtils::buildVerticesFrom01Matrix(const E
     // Строки матрицы D как вершины
     for (int i = 0; i < dim; ++i) {
         vertices.push_back(D.row(i));
+    }
+
+    return vertices;
+}
+
+std::vector<Eigen::RowVectorXd> HadamardUtils::getVerticesWithLogging(const Eigen::MatrixXd& H, int dim) {
+    int order = dim + 1;
+
+    std::cout << "=== Матрица Адамара H (1/-1): ===\n" << H << "\n" << std::endl;
+
+    double detH = H.determinant();
+    double theoreticalDet = std::pow(order, order / 2);
+    std::cout << "det(H) = " << detH << std::endl;
+    std::cout << "Теоретическое значение: ±" << theoreticalDet << "\n" << std::endl;
+
+    // Проверка определителя матрицы Адамара
+    if (std::abs(std::abs(detH) - theoreticalDet) > 1e-6) {
+        std::cout << "ОШИБКА: Определитель матрицы Адамара не соответствует теоретическому значению!" << std::endl;
+        std::cout << "Получено: " << detH << ", ожидается ±" << theoreticalDet << std::endl;
+        std::exit(1);
+    }
+
+    Eigen::MatrixXd D = hadamardTo01Matrix(H);
+
+    std::cout << "=== Матрица D (0/1): ===\n" << D << "\n" << std::endl;
+
+    double detD = D.determinant();
+    double expectedDet = std::abs(detH) / std::pow(2.0, dim);
+    std::cout << "det(D) = " << detD << std::endl;
+    std::cout << "Теоретическое значение: ±" << expectedDet << "\n" << std::endl;
+
+    // Проверка определителя (0/1)-матрицы
+    if (std::abs(std::abs(detD) - expectedDet) > 1e-6) {
+        std::cout << "ОШИБКА: Определитель матрицы D не соответствует теоретическому значению!" << std::endl;
+        std::cout << "Получено: " << detD << ", ожидается ±" << expectedDet << std::endl;
+        std::exit(1);
+    }
+
+    auto vertices = buildVerticesFrom01Matrix(D);
+
+    std::cout << "Вершины симплекса:" << std::endl;
+    for (size_t i = 0; i < vertices.size(); ++i) {
+        std::cout << "v[" << i << "]: " << vertices[i] << std::endl;
     }
 
     return vertices;
