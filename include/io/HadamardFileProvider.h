@@ -10,6 +10,7 @@ public:
     int getDimension() const override { return dim_; }
 
 private:
+    static Eigen::MatrixXd readHadamardFile(const std::string& filename);
     Eigen::MatrixXd H_;
     std::string filename_;
     int dim_;

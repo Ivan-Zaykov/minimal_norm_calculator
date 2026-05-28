@@ -12,7 +12,7 @@ ProgramOptions CommandLineParser::parse(int argc, char* argv[]) {
             opts.showHelp = true;
             return opts;
         }
-        else if (arg == "--dimension" && i + 1 < argc) {
+        if (arg == "--dimension" && i + 1 < argc) {
             parseDimension(opts, i, argv);
             opts.endVertex = 1LL << opts.dimension;
         }
