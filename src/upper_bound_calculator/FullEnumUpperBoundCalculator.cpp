@@ -110,9 +110,11 @@ double FullEnumUpperBoundCalculator::calculate() {
     int64_t totalVertices = partial_ ? (endVertex_ - startVertex_) : (1LL << dim_);
     int64_t startOffset   = partial_ ? startVertex_ : 0;
 
-    int numThreads = std::thread::hardware_concurrency();
-    if (numThreads == 0)
-        numThreads = 8;
+    int numThreads = numThreads_;
+    if (numThreads <= 0) {
+        numThreads = std::thread::hardware_concurrency();
+        if (numThreads == 0) numThreads = 8;
+    }
 
     if (!partial_) {
         std::cout << "=== Полный перебор вершин гиперкуба ===" << std::endl;
@@ -125,7 +127,7 @@ double FullEnumUpperBoundCalculator::calculate() {
         std::cout << "Всего вершин: " << totalVertices << std::endl;
     }
     std::cout << "Потоков: " << numThreads << std::endl;
-    std::cout << "Логирование каждые " << LOG_INTERVAL << " вершин" << std::endl;
+    std::cout << "Логирование каждые " << logInterval_ << " вершин" << std::endl;
     std::cout << "=========================================" << std::endl;
 
     auto startTime = std::chrono::steady_clock::now();
@@ -139,7 +141,7 @@ double FullEnumUpperBoundCalculator::calculate() {
 
         threads.emplace_back(enumerateSubset, &func_, dim_, start, end, &globalMax_,
                              &processedVertices_, &lastLogged_, &currentBestVertex_, totalVertices,
-                             LOG_INTERVAL, startTime);
+                             logInterval_, startTime);
     }
 
     for (auto& th : threads) {

@@ -10,11 +10,10 @@
 
 int main(int argc, char* argv[]) {
 //  ============================ РАЗБОР АРГУМЕНТОВ КОМАНДНОЙ СТРОКИ ============================
-    CommandLineParser parser;
-    ProgramOptions opts = parser.parse(argc, argv);
+    ProgramOptions opts = CommandLineParser::parse(argc, argv);
 
     if (opts.showHelp) {
-        parser.printHelp(argv[0]);
+        CommandLineParser::printHelp(argv[0]);
         return 0;
     }
 
@@ -67,6 +66,9 @@ int main(int argc, char* argv[]) {
     } else {
         upper_bound_calculator = std::make_unique<FullEnumUpperBoundCalculator>(lebesgueFunc, opts.dimension);
     }
+
+    upper_bound_calculator->setNumThreads(opts.numThreads);
+    upper_bound_calculator->setLogInterval(opts.logInterval);
 
     auto start = std::chrono::high_resolution_clock::now();
     double maxLebesgue = upper_bound_calculator->calculate();

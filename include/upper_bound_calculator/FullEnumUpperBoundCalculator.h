@@ -30,7 +30,4 @@ class FullEnumUpperBoundCalculator : public UpperBoundCalculatorInterface {
     int64_t startVertex_;
     int64_t endVertex_;
     bool    partial_;
-
-    // Константа для логирования
-    static constexpr int64_t LOG_INTERVAL = 10'000'000;
 };
