@@ -1,4 +1,6 @@
 #include "io/HadamardFileProvider.h"
+
+#include "utils/HadamardMatrixIterator.h"
 #include "utils/HadamardUtils.h"
 #include <fstream>
 #include <iostream>
@@ -102,4 +104,8 @@ Eigen::MatrixXd HadamardFileProvider::readHadamardFile(const std::string& filena
     std::cout << "Файл прочитан в " << (isSymbolicFormat ? "символьном" : "числовом") << " формате" << std::endl;
 
     return H;
+}
+
+HadamardMatrixIterator HadamardFileProvider::getIterator(const std::string& filename) {
+    return HadamardMatrixIterator(filename);
 }

@@ -16,21 +16,26 @@ ProgramOptions CommandLineParser::parse(int argc, char* argv[]) {
             parseDimension(opts, i, argv);
             opts.endVertex = 1LL << opts.dimension;
         }
-        else if (arg == "--range" && i + 2 < argc) {
+        if (arg == "--range" && i + 2 < argc) {
             parseRange(opts, i, argv);
         }
-        else if (arg == "--threads" && i + 1 < argc) {
+        if (arg == "--threads" && i + 1 < argc) {
             parseThreads(opts, i, argv);
         }
-        else if (arg == "--log-interval" && i + 1 < argc) {
+        if (arg == "--log-interval" && i + 1 < argc) {
             parseLogInterval(opts, i, argv);
         }
-        else if (arg == "--load-hadamard" && i + 1 < argc) {
+        if (arg == "--batch" && i + 1 < argc) {
+            opts.batchMode = true;
+            opts.inputDir = argv[++i];
+            std::cout << "Пакетный режим. Каталог: " << opts.inputDir << std::endl;
+        }
+        if (arg == "--load-hadamard" && i + 1 < argc) {
             opts.loadFromFile = true;
             opts.fileType = ProgramOptions::FileType::HADAMARD;
             opts.inputFile = argv[++i];
         }
-        else if (arg == "--load-simplex" && i + 1 < argc) {
+        if (arg == "--load-simplex" && i + 1 < argc) {
             opts.loadFromFile = true;
             opts.fileType = ProgramOptions::FileType::SIMPLEX;
             opts.inputFile = argv[++i];
@@ -82,6 +87,7 @@ void CommandLineParser::printHelp(const char* programName) {
     std::cout << "ОПЦИИ ЗАГРУЗКИ ДАННЫХ:" << std::endl;
     std::cout << "  --load-hadamard FILE  загрузить матрицу Адамара из файла" << std::endl;
     std::cout << "  --load-simplex FILE   загрузить вершины симплекса из файла" << std::endl;
+    std::cout << "  --batch DIR           пакетная обработка всех файлов в каталоге" << std::endl;
     std::cout << std::endl;
     std::cout << "ПРИМЕРЫ:" << std::endl;
     std::cout << "  " << programName << "                                              # стандартный режим (dim=7)" << std::endl;

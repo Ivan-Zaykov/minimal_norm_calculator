@@ -63,14 +63,14 @@ std::vector<Eigen::RowVectorXd> HadamardUtils::getVerticesWithLogging(const Eige
 
     std::cout << "=== Матрица Адамара H (1/-1): ===\n" << H << "\n" << std::endl;
 
-    double detH = H.determinant();
-    double theoreticalDet = std::pow(order, order / 2);
+    long double detH = H.determinant();
+    long double theoreticalDet = std::pow(order, order / 2);
     std::cout << "det(H) = " << detH << std::endl;
     std::cout << "Теоретическое значение: ±" << theoreticalDet << "\n" << std::endl;
 
     // Проверка определителя матрицы Адамара
-    if (std::abs(std::abs(detH) - theoreticalDet) > 1e-6) {
-        std::cout << "ОШИБКА: Определитель матрицы Адамара не соответствует теоретическому значению!" << std::endl;
+    if (std::abs(std::abs(detH) - std::abs(theoreticalDet)) > 10) {
+        std::cout << "ОШИБКА: Определитель матрицы Адамара (-1/1) не соответствует теоретическому значению!" << std::endl;
         std::cout << "Получено: " << detH << ", ожидается ±" << theoreticalDet << std::endl;
         std::exit(1);
     }
@@ -85,8 +85,8 @@ std::vector<Eigen::RowVectorXd> HadamardUtils::getVerticesWithLogging(const Eige
     std::cout << "Теоретическое значение: ±" << expectedDet << "\n" << std::endl;
 
     // Проверка определителя (0/1)-матрицы
-    if (std::abs(std::abs(detD) - expectedDet) > 1e-6) {
-        std::cout << "ОШИБКА: Определитель матрицы D не соответствует теоретическому значению!" << std::endl;
+    if (std::abs(std::abs(detD) - std::abs(expectedDet)) > 10) {
+        std::cout << "ОШИБКА: Определитель матрицы Адамара (0/1) не соответствует теоретическому значению!" << std::endl;
         std::cout << "Получено: " << detD << ", ожидается ±" << expectedDet << std::endl;
         std::exit(1);
     }

@@ -15,7 +15,9 @@ struct ProgramOptions {
 
     // Режим загрузки данных
     bool loadFromFile = false;
+    bool batchMode = false;
     std::string inputFile;
+    std::string inputDir;
     enum class FileType { HADAMARD, SIMPLEX } fileType = FileType::HADAMARD;
 
     // Помощь
