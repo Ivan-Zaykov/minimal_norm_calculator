@@ -18,7 +18,7 @@ namespace fs = std::filesystem;
 struct ProgramOptions;
 
 // Функция обработки одной матрицы Адамара
-void Processing::processHadamardMatrix(const Eigen::MatrixXd& H, const ProgramOptions& opts, int& matrixCounter) {
+double Processing::processHadamardMatrix(const Eigen::MatrixXd& H, const ProgramOptions& opts, int matrixCounter) {
     int order = H.rows();
     int expectedOrder = opts.dimension + 1;
 
@@ -28,8 +28,7 @@ void Processing::processHadamardMatrix(const Eigen::MatrixXd& H, const ProgramOp
                   << " не соответствует ожидаемому " << expectedOrder << std::endl;
         std::cout << "Матрица #" << matrixCounter << ": неверный порядок ("
                    << order << " вместо " << expectedOrder << ")" << std::endl;
-        matrixCounter++;
-        return;
+        return -1.0;
     }
 
     std::cout << "\n" << std::string(60, '=') << std::endl;
@@ -46,8 +45,7 @@ void Processing::processHadamardMatrix(const Eigen::MatrixXd& H, const ProgramOp
     if (!SimplexBasis::verifyInterpolation(basis, 0.00001)) {
         std::cout << "ОШИБКА: Интерполяционные свойства не выполняются!" << std::endl;
         std::cout << "Матрица #" << matrixCounter << ": ошибка интерполяции" << std::endl;
-        matrixCounter++;
-        return;
+        return -1.0;
     }
 
     // Вычисление верхней границы
@@ -66,18 +64,23 @@ void Processing::processHadamardMatrix(const Eigen::MatrixXd& H, const ProgramOp
     std::cout << "Время выполнения: " << duration.count() << " секунд" << std::endl;
     std::cout << std::endl;
 
-    // Сохраняем результат
-    std::cout  << "ИТОГ для Матрица #" << matrixCounter
-               << ", порядок " << order
-               << ": " << std::fixed << std::setprecision(6) << maxLebesgue
-               << " (за " << duration.count() << " сек)" << std::endl;
+    // Вывод результата
+    std::cout << "ИТОГ для Матрица #" << matrixCounter
+              << ", порядок " << order
+              << ": " << std::fixed << std::setprecision(6) << maxLebesgue
+              << " (за " << duration.count() << " сек)" << std::endl;
 
-    matrixCounter++;
+    return maxLebesgue;
 }
 
 // Функция обработки одного файла (может содержать несколько матриц)
-int Processing::processHadamarMatrixFromFile(const std::string& filename, const ProgramOptions& opts) {
+int Processing::processHadamardMatrixFromFile(
+    const std::string& filename, const ProgramOptions& opts,
+    double& globalMin, int& globalMinMatrixIdx, Eigen::RowVectorXd& globalMinPoint) {
     int matrixCounter = 1;
+    double fileMin = std::numeric_limits<double>::max();
+    int fileMinIdx = -1;
+    Eigen::RowVectorXd fileMinPoint;
 
     std::cout << "\n" << std::string(80, '=') << std::endl;
     std::cout << "Обработка файла: " << filename << std::endl;
@@ -86,14 +89,34 @@ int Processing::processHadamarMatrixFromFile(const std::string& filename, const 
     try {
         HadamardMatrixIterator it(filename);
         while (it.hasNext()) {
-            std::cout << std::fixed << std::setprecision(0) << std::endl;
             Eigen::MatrixXd H = it.next();
-            processHadamardMatrix(H, opts, matrixCounter);
+            double lebesgue = processHadamardMatrix(H, opts, matrixCounter);
+
+            if (lebesgue >= 0) {
+                if (lebesgue < fileMin) {
+                    fileMin = lebesgue;
+                    fileMinIdx = matrixCounter;
+                }
+            }
+            matrixCounter++;
         }
     } catch (const std::exception& e) {
         std::cout << "Ошибка при обработке файла " << filename << ": " << e.what() << std::endl;
         std::cout << "Ошибка в файле " << filename << ": " << e.what() << std::endl;
     }
+
+    if (fileMinIdx != -1) {
+        std::cout << "\n>>> МИНИМУМ в файле " << filename << ": матрица #" << fileMinIdx
+                  << " дала значение " << std::fixed << std::setprecision(4) << fileMin << std::endl;
+
+        // Обновляем глобальный минимум
+        if (fileMin < globalMin) {
+            globalMin = fileMin;
+            globalMinMatrixIdx = fileMinIdx;
+            globalMinPoint = fileMinPoint;
+        }
+    }
+
     return 0;
 }
 
@@ -114,18 +137,33 @@ int Processing::processBatch(const ProgramOptions& opts) {
     std::sort(files.begin(), files.end());
     std::cout << "Найдено файлов для обработки: " << files.size() << std::endl;
 
+    // Глобальный минимум
+    double globalMin = std::numeric_limits<double>::max();
+    int globalMinMatrixIdx = -1;
+    Eigen::RowVectorXd globalMinPoint;
+
     for (const auto& file : files) {
-        processHadamarMatrixFromFile(file, opts);
+        processHadamardMatrixFromFile(file, opts, globalMin, globalMinMatrixIdx, globalMinPoint);
     }
+
+    // Вывод глобального минимума
+    if (globalMinMatrixIdx != -1) {
+        std::cout << "\n" << std::string(80, '*') << std::endl;
+        std::cout << "ГЛОБАЛЬНЫЙ МИНИМУМ: матрица #" << globalMinMatrixIdx
+                  << " дала значение " << std::fixed << std::setprecision(6) << globalMin << std::endl;
+        std::cout << std::string(80, '*') << std::endl;
+    }
+
     return 0;
 }
 
 int Processing::processSingleFile(const std::string& filename, const ProgramOptions& opts) {
     if (opts.fileType == ProgramOptions::FileType::HADAMARD) {
-        // Файл с матрицами Адамара (может содержать несколько)
-        return processHadamarMatrixFromFile(filename, opts);
+        double dummyMin;
+        int dummyIdx;
+        Eigen::RowVectorXd dummyPoint;
+        return processHadamardMatrixFromFile(filename, opts, dummyMin, dummyIdx, dummyPoint);
     }
-
     return processSimplexFromFile(opts);
 }
 
