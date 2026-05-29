@@ -15,7 +15,6 @@ public:
 private:
     std::string filename_;
     std::ifstream file_;
-    std::string nextLine_;
     int currentOrder_;
 
     static bool isCommentLine(const std::string& line);
@@ -23,6 +22,5 @@ private:
     static bool isNumericLine(const std::string& line);
 
     static std::vector<double> parseLine(const std::string& line);
-    bool findNextMatrix();
     Eigen::MatrixXd readNextMatrix();
 };

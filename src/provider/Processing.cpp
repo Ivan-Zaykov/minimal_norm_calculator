@@ -86,6 +86,7 @@ int Processing::processHadamarMatrixFromFile(const std::string& filename, const 
     try {
         HadamardMatrixIterator it(filename);
         while (it.hasNext()) {
+            std::cout << std::fixed << std::setprecision(0) << std::endl;
             Eigen::MatrixXd H = it.next();
             processHadamardMatrix(H, opts, matrixCounter);
         }
