@@ -1,6 +1,6 @@
 #pragma once
 #include "SilvesterMethodProvider.h"
-#include "io/ISimplexProvider.h"
+#include "provider/ISimplexProvider.h"
 #include "utils/HadamardMatrixIterator.h"
 
 #include <string>

@@ -1,7 +1,7 @@
 #include "factory/SimplexProviderFactory.h"
-#include "io/SilvesterMethodProvider.h"
-#include "io/HadamardFileProvider.h"
-#include "io/SimplexFileProvider.h"
+#include "provider/SilvesterMethodProvider.h"
+#include "provider/HadamardFileProvider.h"
+#include "provider/SimplexFileProvider.h"
 
 std::unique_ptr<ISimplexProvider> SimplexProviderFactory::create(Type type, int dim, const std::string& filename) {
     switch (type) {
