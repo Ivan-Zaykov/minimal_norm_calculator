@@ -98,6 +98,8 @@ std::vector<Eigen::RowVectorXd> HadamardUtils::getVerticesWithLogging(const Eige
         std::cout << "v[" << i << "]: " << vertices[i] << std::endl;
     }
 
+    std::cout << std::endl;
+
     return vertices;
 }
 

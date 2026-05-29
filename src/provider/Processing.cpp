@@ -64,9 +64,10 @@ void Processing::processHadamardMatrix(const Eigen::MatrixXd& H, const ProgramOp
 
     std::cout << "Максимальная константа Лебега: " << std::fixed << std::setprecision(6) << maxLebesgue << std::endl;
     std::cout << "Время выполнения: " << duration.count() << " секунд" << std::endl;
+    std::cout << std::endl;
 
     // Сохраняем результат
-    std::cout  << "Матрица #" << matrixCounter
+    std::cout  << "ИТОГ для Матрица #" << matrixCounter
                << ", порядок " << order
                << ": " << std::fixed << std::setprecision(6) << maxLebesgue
                << " (за " << duration.count() << " сек)" << std::endl;
@@ -80,7 +81,7 @@ int Processing::processHadamarMatrixFromFile(const std::string& filename, const 
 
     std::cout << "\n" << std::string(80, '=') << std::endl;
     std::cout << "Обработка файла: " << filename << std::endl;
-    std::cout << std::string(80, '*') << std::endl;
+    std::cout << std::string(80, '=') << std::endl;
 
     try {
         HadamardMatrixIterator it(filename);

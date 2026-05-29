@@ -63,5 +63,7 @@ bool SimplexBasis::verifyInterpolation(const SimplexBasis& basis, double toleran
     }
 
     std::cout << "Максимальная ошибка по всем парам (вершина, базис): " << maxError << std::endl;
+    std::cout << std::endl;
+
     return maxError < tolerance;
 }

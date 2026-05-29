@@ -3,6 +3,7 @@
 #include <stdexcept>
 #include <iostream>
 #include <cctype>
+#include <cmath>
 
 HadamardMatrixIterator::HadamardMatrixIterator(const std::string& filename)
     : filename_(filename), currentOrder_(0) {
@@ -19,25 +20,39 @@ void HadamardMatrixIterator::reset() {
 }
 
 bool HadamardMatrixIterator::hasNext() const {
-    return file_.is_open() && !nextLine_.empty();
+    return file_.is_open() && (!nextLine_.empty() || !isCommentLine(nextLine_));
 }
 
 bool HadamardMatrixIterator::isCommentLine(const std::string& line) {
     if (line.empty()) return false;
     char c = line[0];
-    return (c != '+' && c != '-' && c != '1' && !(c >= '0' && c <= '9'));
+    // Строка комментария: первый символ не +, -, 0, 1, и не минус (который может быть началом -1)
+    // Но -1 начинается с '-', поэтому нужно отличать числовой -1 от комментария
+    // Проще: комментарий — если первый символ буква или не является частью допустимого формата
+    if (c == '+' || c == '-') return false;
+    if (c == '0' || c == '1') return false;
+    if (c == ' ' || c == '\t') return false;
+    return true;
 }
 
 bool HadamardMatrixIterator::isSymbolicLine(const std::string& line) {
     if (line.empty()) return false;
-    char c = line[0];
-    return (c == '+' || c == '-');
+    // Символьный формат: строка состоит только из '+' и '-'
+    for (char ch : line) {
+        if (ch != '+' && ch != '-') return false;
+    }
+    return true;
 }
 
-bool HadamardMatrixIterator::isNumericLine(const std::string& line) {
+bool HadamardMatrixIterator::isNumericLine(const std::string& line){
     if (line.empty()) return false;
-    char c = line[0];
-    return (c == '1' || c == '-' || (c >= '0' && c <= '9'));
+    // Числовой формат: строка содержит числа -1, 0 или 1, разделённые пробелами
+    std::istringstream iss(line);
+    double val;
+    while (iss >> val) {
+        if (std::abs(val) > 1.01) return false; // не -1, 0 или 1
+    }
+    return true;
 }
 
 std::vector<double> HadamardMatrixIterator::parseLine(const std::string& line) {
@@ -51,7 +66,13 @@ std::vector<double> HadamardMatrixIterator::parseLine(const std::string& line) {
     } else {
         std::istringstream iss(line);
         double val;
-        while (iss >> val) row.push_back(val);
+        while (iss >> val) {
+            // Нормализуем к -1, 0, 1 (на случай -0.999999)
+            if (std::abs(val - 1.0) < 1e-12) val = 1.0;
+            else if (std::abs(val + 1.0) < 1e-12) val = -1.0;
+            else if (std::abs(val) < 1e-12) val = 0.0;
+            row.push_back(val);
+        }
     }
 
     return row;
@@ -62,7 +83,10 @@ bool HadamardMatrixIterator::findNextMatrix() {
     while (std::getline(file_, line)) {
         // Удаляем пробелы в начале и конце
         size_t start = line.find_first_not_of(" \t\r\n");
-        if (start == std::string::npos) continue; // пустая строка
+        if (start == std::string::npos) {
+            // Пустая строка — разделитель, продолжаем поиск
+            continue;
+        }
         line = line.substr(start);
 
         size_t end = line.find_last_not_of(" \t\r\n");
@@ -90,16 +114,25 @@ bool HadamardMatrixIterator::findNextMatrix() {
 
 Eigen::MatrixXd HadamardMatrixIterator::readNextMatrix() {
     std::vector<std::vector<double>> rows;
+    int expectedRowLength = -1;
 
     // Добавляем первую строку
-    rows.push_back(parseLine(nextLine_));
+    std::vector<double> firstRow = parseLine(nextLine_);
+    if (firstRow.empty()) {
+        throw std::runtime_error("Первая строка матрицы не содержит данных");
+    }
+    expectedRowLength = firstRow.size();
+    rows.push_back(firstRow);
 
     // Читаем остальные строки матрицы
     std::string line;
     while (std::getline(file_, line)) {
         // Удаляем пробелы
         size_t start = line.find_first_not_of(" \t\r\n");
-        if (start == std::string::npos) continue;
+        if (start == std::string::npos) {
+            // Пустая строка — разделитель матриц, выходим
+            break;
+        }
         line = line.substr(start);
 
         size_t end = line.find_last_not_of(" \t\r\n");
@@ -109,8 +142,25 @@ Eigen::MatrixXd HadamardMatrixIterator::readNextMatrix() {
 
         if (line.empty()) break;
 
-        // Это строка текущей матрицы
-        rows.push_back(parseLine(line));
+        if (isCommentLine(line)) {
+            continue;
+        }
+
+        // Строка данных матрицы
+        if (isSymbolicLine(line) || isNumericLine(line)) {
+            std::vector<double> row = parseLine(line);
+
+            // Проверка длины строки
+            if ((int)row.size() != expectedRowLength) {
+                throw std::runtime_error("Несоответствие длины строки: ожидалось " +
+                                         std::to_string(expectedRowLength) + ", получено " +
+                                         std::to_string(row.size()));
+            }
+            rows.push_back(row);
+        } else {
+            // Неизвестный формат — вероятно, разделитель
+            break;
+        }
     }
 
     int n = rows.size();
