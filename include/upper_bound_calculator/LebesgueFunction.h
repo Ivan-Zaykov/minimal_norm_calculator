@@ -4,7 +4,7 @@
 class LebesgueFunction {
    public:
     explicit LebesgueFunction(const SimplexBasis& basis);
-    double operator()(const Eigen::VectorXd& x) const;
+    double operator()(const Eigen::RowVectorXd& x) const;
 
    private:
     const SimplexBasis& basis_;

@@ -1,4 +1,4 @@
-#include "optimizer/DirectCalculator.h"
+#include "upper_bound_calculator/FullEnumUpperBoundCalculator.h"
 #include <thread>
 #include <vector>
 #include <iostream>
@@ -8,7 +8,7 @@
 
 static std::mutex cout_mutex;
 
-DirectCalculator::DirectCalculator(const LebesgueFunction& func, int dim)
+FullEnumUpperBoundCalculator::FullEnumUpperBoundCalculator(const LebesgueFunction& func, int dim)
     : func_(func),
       dim_(dim),
       globalMax_(0.0),
@@ -18,10 +18,10 @@ DirectCalculator::DirectCalculator(const LebesgueFunction& func, int dim)
       startVertex_(0),
       endVertex_(0),
       partial_(false) {
-    maxPoint_ = Eigen::VectorXd::Zero(dim_);
+    maxPoint_ = Eigen::RowVectorXd::Zero(dim_);
 }
 
-DirectCalculator::DirectCalculator(const LebesgueFunction& func, int dim, int64_t startVertex,
+FullEnumUpperBoundCalculator::FullEnumUpperBoundCalculator(const LebesgueFunction& func, int dim, int64_t startVertex,
                                    int64_t endVertex)
     : func_(func),
       dim_(dim),
@@ -32,7 +32,7 @@ DirectCalculator::DirectCalculator(const LebesgueFunction& func, int dim, int64_
       startVertex_(startVertex),
       endVertex_(endVertex),
       partial_(true) {
-    maxPoint_ = Eigen::VectorXd::Zero(dim_);
+    maxPoint_ = Eigen::RowVectorXd::Zero(dim_);
 }
 
 static void enumerateSubset(const LebesgueFunction* func, int dim, int64_t start, int64_t end,
@@ -44,7 +44,7 @@ static void enumerateSubset(const LebesgueFunction* func, int dim, int64_t start
     int64_t localBestVertex = 0;
 
     for (int64_t idx = start; idx < end; ++idx) {
-        Eigen::VectorXd x(dim);
+        Eigen::RowVectorXd x(dim);
         for (int i = 0; i < dim; ++i) {
             x(i) = ((idx >> i) & 1) ? 1.0 : 0.0;
         }
@@ -106,13 +106,15 @@ static void enumerateSubset(const LebesgueFunction* func, int dim, int64_t start
     }
 }
 
-double DirectCalculator::optimize() {
+double FullEnumUpperBoundCalculator::calculate() {
     int64_t totalVertices = partial_ ? (endVertex_ - startVertex_) : (1LL << dim_);
     int64_t startOffset   = partial_ ? startVertex_ : 0;
 
-    int numThreads = std::thread::hardware_concurrency();
-    if (numThreads == 0)
-        numThreads = 8;
+    int numThreads = numThreads_;
+    if (numThreads <= 0) {
+        numThreads = std::thread::hardware_concurrency();
+        if (numThreads == 0) numThreads = 8;
+    }
 
     if (!partial_) {
         std::cout << "=== Полный перебор вершин гиперкуба ===" << std::endl;
@@ -125,7 +127,7 @@ double DirectCalculator::optimize() {
         std::cout << "Всего вершин: " << totalVertices << std::endl;
     }
     std::cout << "Потоков: " << numThreads << std::endl;
-    std::cout << "Логирование каждые " << LOG_INTERVAL << " вершин" << std::endl;
+    std::cout << "Логирование каждые " << logInterval_ << " вершин" << std::endl;
     std::cout << "=========================================" << std::endl;
 
     auto startTime = std::chrono::steady_clock::now();
@@ -139,7 +141,7 @@ double DirectCalculator::optimize() {
 
         threads.emplace_back(enumerateSubset, &func_, dim_, start, end, &globalMax_,
                              &processedVertices_, &lastLogged_, &currentBestVertex_, totalVertices,
-                             LOG_INTERVAL, startTime);
+                             logInterval_, startTime);
     }
 
     for (auto& th : threads) {

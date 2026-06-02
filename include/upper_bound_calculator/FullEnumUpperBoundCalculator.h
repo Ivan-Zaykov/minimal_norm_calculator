@@ -1,26 +1,26 @@
 #pragma once
-#include "optimizer/INormOptimizer.h"
-#include "optimizer/LebesgueFunction.h"
+#include "upper_bound_calculator/UpperBoundCalculatorInterface.h"
+#include "upper_bound_calculator/LebesgueFunction.h"
 #include <atomic>
 #include <Eigen/Dense>
 
-class DirectCalculator : public INormOptimizer {
+class FullEnumUpperBoundCalculator : public UpperBoundCalculatorInterface {
    public:
-    DirectCalculator(const LebesgueFunction& func, int dim);
+    FullEnumUpperBoundCalculator(const LebesgueFunction& func, int dim);
 
-    DirectCalculator(const LebesgueFunction& func, int dim, int64_t startVertex, int64_t endVertex);
+    FullEnumUpperBoundCalculator(const LebesgueFunction& func, int dim, int64_t startVertex, int64_t endVertex);
 
     // Запуск перебора. Возвращает максимальное значение константы Лебега
-    double optimize() override;
+    double calculate() override;
 
-    [[nodiscard]] Eigen::VectorXd getMaxPoint() const override {
+    [[nodiscard]] Eigen::RowVectorXd getMaxPoint() const override {
         return maxPoint_;
     }
 
    private:
     const LebesgueFunction& func_;
     int                     dim_;
-    Eigen::VectorXd         maxPoint_;
+    Eigen::RowVectorXd         maxPoint_;
     std::atomic<double>     globalMax_;
     std::atomic<int64_t>    processedVertices_;
     std::atomic<int64_t>    lastLogged_;
@@ -30,7 +30,4 @@ class DirectCalculator : public INormOptimizer {
     int64_t startVertex_;
     int64_t endVertex_;
     bool    partial_;
-
-    // Константа для логирования
-    static constexpr int64_t LOG_INTERVAL = 10'000'000;
 };

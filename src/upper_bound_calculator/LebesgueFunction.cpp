@@ -1,10 +1,10 @@
-#include "optimizer/LebesgueFunction.h"
+#include "upper_bound_calculator/LebesgueFunction.h"
 #include <cmath>
 
 LebesgueFunction::LebesgueFunction(const SimplexBasis& basis) : basis_(basis) {
 }
 
-double LebesgueFunction::operator()(const Eigen::VectorXd& x) const {
+double LebesgueFunction::operator()(const Eigen::RowVectorXd& x) const {
     double sum = 0.0;
     for (int i = 0; i < basis_.size(); ++i) {
         sum += std::abs(basis_.value(i, x));

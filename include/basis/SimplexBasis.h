@@ -4,16 +4,16 @@
 
 class SimplexBasis {
    public:
-    explicit SimplexBasis(const std::vector<Eigen::VectorXd>& vertices);
+    explicit SimplexBasis(const std::vector<Eigen::RowVectorXd>& vertices);
     [[nodiscard]] int    size() const;
-    [[nodiscard]] double value(int i, const Eigen::VectorXd& x) const;
+    [[nodiscard]] double value(int i, const Eigen::RowVectorXd& x) const;
     static bool          verifyInterpolation(const SimplexBasis& basis, double tolerance);
-    [[nodiscard]] const std::vector<Eigen::VectorXd>& getVertices() const {
+    [[nodiscard]] const std::vector<Eigen::RowVectorXd>& getVertices() const {
         return vertices_;
     }
 
    private:
-    std::vector<Eigen::VectorXd> vertices_;
+    std::vector<Eigen::RowVectorXd> vertices_;
     int                          dim_;
     Eigen::MatrixXd              Ainv_;
 
