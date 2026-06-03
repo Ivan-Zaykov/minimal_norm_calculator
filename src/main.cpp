@@ -1,5 +1,5 @@
 #include "cli/CommandLineParser.h"
-#include "vertices_provider/Processing.h"
+#include "../include/processing/Processing.h"
 #include <iostream>
 
 int main(int argc, char* argv[]) {

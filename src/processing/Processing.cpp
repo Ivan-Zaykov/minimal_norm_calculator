@@ -1,4 +1,4 @@
-#include "vertices_provider/Processing.h"
+#include "processing/Processing.h"
 
 #include "basis/SimplexBasis.h"
 #include "cli/CommandLineParser.h"
