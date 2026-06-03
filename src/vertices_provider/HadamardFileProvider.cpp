@@ -1,7 +1,7 @@
 #include "vertices_provider/HadamardFileProvider.h"
 
-#include "utils/HadamardMatrixIterator.h"
-#include "utils/HadamardUtils.h"
+#include "hadamard_utils/HadamardMatrixIterator.h"
+#include "hadamard_utils/HadamardUtils.h"
 #include <fstream>
 #include <iostream>
 #include <sstream>

@@ -1,5 +1,5 @@
 #include "vertices_provider/SilvesterMethodProvider.h"
-#include "utils/HadamardUtils.h"
+#include "hadamard_utils/HadamardUtils.h"
 #include <iostream>
 #include <stdexcept>
 #include <cmath>

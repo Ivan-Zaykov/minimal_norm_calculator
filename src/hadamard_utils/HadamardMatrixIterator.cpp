@@ -1,4 +1,4 @@
-#include "utils/HadamardMatrixIterator.h"
+#include "hadamard_utils/HadamardMatrixIterator.h"
 #include <sstream>
 #include <stdexcept>
 #include <iostream>

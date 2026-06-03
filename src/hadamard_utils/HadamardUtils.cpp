@@ -1,4 +1,4 @@
-#include "utils/HadamardUtils.h"
+#include "hadamard_utils/HadamardUtils.h"
 
 #include <iostream>
 

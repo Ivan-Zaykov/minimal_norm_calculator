@@ -5,8 +5,8 @@
 #include "vertices_provider/SimplexProviderFactory.h"
 #include "upper_bound_calculator/FullEnumUpperBoundCalculator.h"
 #include "upper_bound_calculator/LebesgueFunction.h"
-#include "utils/HadamardMatrixIterator.h"
-#include "utils/HadamardUtils.h"
+#include "hadamard_utils/HadamardMatrixIterator.h"
+#include "hadamard_utils/HadamardUtils.h"
 
 #include <chrono>
 #include <iomanip>

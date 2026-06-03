@@ -1,6 +1,6 @@
 #pragma once
 #include "vertices_provider/ISimplexProvider.h"
-#include "utils/HadamardMatrixIterator.h"
+#include "hadamard_utils/HadamardMatrixIterator.h"
 
 #include <string>
 
