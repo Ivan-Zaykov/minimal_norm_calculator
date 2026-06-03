@@ -1,5 +1,5 @@
 #pragma once
-#include "provider/ISimplexProvider.h"
+#include "vertices_provider/ISimplexProvider.h"
 #include "utils/HadamardMatrixIterator.h"
 
 #include <string>

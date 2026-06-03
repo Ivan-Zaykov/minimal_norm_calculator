@@ -1,4 +1,4 @@
-#include "provider/Processing.h"
+#include "vertices_provider/Processing.h"
 
 #include "basis/SimplexBasis.h"
 #include "cli/CommandLineParser.h"
@@ -169,9 +169,9 @@ int Processing::processSingleFile(const std::string& filename, const ProgramOpti
 }
 
 int Processing::processSilvester(const ProgramOptions& opts) {
-    auto provider =
+    auto vertices_provider =
         SimplexProviderFactory::create(SimplexProviderFactory::Type::SILVESTER, opts.dimension, "");
-    auto vertices = provider->getVertices();
+    auto vertices = vertices_provider->getVertices();
 
     std::cout << "Число вершин симплекса: " << vertices.size() << "\n" << std::endl;
 

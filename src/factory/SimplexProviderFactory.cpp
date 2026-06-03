@@ -1,6 +1,6 @@
 #include "factory/SimplexProviderFactory.h"
-#include "provider/SilvesterMethodProvider.h"
-#include "provider/HadamardFileProvider.h"
+#include "vertices_provider/SilvesterMethodProvider.h"
+#include "vertices_provider/HadamardFileProvider.h"
 
 std::unique_ptr<ISimplexProvider> SimplexProviderFactory::create(Type type, int dim,
                                                                  const std::string& filename) {

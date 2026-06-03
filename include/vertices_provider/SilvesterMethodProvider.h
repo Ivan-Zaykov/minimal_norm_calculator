@@ -1,5 +1,5 @@
 #pragma once
-#include "provider/ISimplexProvider.h"
+#include "vertices_provider/ISimplexProvider.h"
 
 class SilvesterMethodProvider : public ISimplexProvider {
    public:
