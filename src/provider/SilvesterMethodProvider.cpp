@@ -6,7 +6,7 @@
 
 SilvesterMethodProvider::SilvesterMethodProvider(int dim) : dim_(dim) {
     int order = dim + 1;
-    H_ = hadamardMatrix(order);
+    H_        = hadamardMatrix(order);
 
     if (!HadamardUtils::isHadamardMatrix(H_)) {
         throw std::runtime_error("Созданная алгоритмом матрица не является матрицей Адамара!");
@@ -22,12 +22,12 @@ Eigen::MatrixXd SilvesterMethodProvider::hadamardMatrix(int order) {
     if (order <= 0 || (order & (order - 1)) != 0) {
         throw std::runtime_error("Метод Сильвестра требует порядок, являющийся степенью двойки");
     }
-    int half = order / 2;
+    int             half  = order / 2;
     Eigen::MatrixXd Hhalf = hadamardMatrix(half);
     Eigen::MatrixXd H(order, order);
-    H.topLeftCorner(half, half) = Hhalf;
-    H.topRightCorner(half, half) = Hhalf;
-    H.bottomLeftCorner(half, half) = Hhalf;
+    H.topLeftCorner(half, half)     = Hhalf;
+    H.topRightCorner(half, half)    = Hhalf;
+    H.bottomLeftCorner(half, half)  = Hhalf;
     H.bottomRightCorner(half, half) = -Hhalf;
     return H;
 }

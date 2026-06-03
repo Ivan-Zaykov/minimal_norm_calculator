@@ -8,7 +8,8 @@ class FullEnumUpperBoundCalculator : public UpperBoundCalculatorInterface {
    public:
     FullEnumUpperBoundCalculator(const LebesgueFunction& func, int dim);
 
-    FullEnumUpperBoundCalculator(const LebesgueFunction& func, int dim, int64_t startVertex, int64_t endVertex);
+    FullEnumUpperBoundCalculator(const LebesgueFunction& func, int dim, int64_t startVertex,
+                                 int64_t endVertex);
 
     // Запуск перебора. Возвращает максимальное значение константы Лебега
     double calculate() override;
@@ -20,7 +21,7 @@ class FullEnumUpperBoundCalculator : public UpperBoundCalculatorInterface {
    private:
     const LebesgueFunction& func_;
     int                     dim_;
-    Eigen::RowVectorXd         maxPoint_;
+    Eigen::RowVectorXd      maxPoint_;
     std::atomic<double>     globalMax_;
     std::atomic<int64_t>    processedVertices_;
     std::atomic<int64_t>    lastLogged_;

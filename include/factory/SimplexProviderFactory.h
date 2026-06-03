@@ -4,12 +4,9 @@
 #include <string>
 
 class SimplexProviderFactory {
-public:
-    enum class Type {
-        SILVESTER,
-        FROM_HADAMARD_FILE,
-        FROM_SIMPLEX_FILE
-    };
+   public:
+    enum class Type { SILVESTER, FROM_HADAMARD_FILE };
 
-    static std::unique_ptr<ISimplexProvider> create(Type type, int dim = 0, const std::string& filename = "");
+    static std::unique_ptr<ISimplexProvider> create(Type type, int dim = 0,
+                                                    const std::string& filename = "");
 };

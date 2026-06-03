@@ -12,14 +12,15 @@ HadamardFileProvider::HadamardFileProvider(const std::string& filename)
     H_ = readHadamardFile(filename_);
 
     int order = H_.rows();
-    dim_ = order - 1;
+    dim_      = order - 1;
 
     // Проверка, что загруженная матрица является матрицей Адамара
     if (!HadamardUtils::isHadamardMatrix(H_)) {
         throw std::runtime_error("Загруженная матрица не является матрицей Адамара!");
     }
 
-    std::cout << "Матрица Адамара порядка " << order << " успешно загружена и проверена" << std::endl;
+    std::cout << "Матрица Адамара порядка " << order << " успешно загружена и проверена"
+              << std::endl;
 }
 
 std::vector<Eigen::RowVectorXd> HadamardFileProvider::getVertices() {
@@ -33,8 +34,8 @@ Eigen::MatrixXd HadamardFileProvider::readHadamardFile(const std::string& filena
     }
 
     std::vector<std::vector<double>> rows;
-    std::string line;
-    bool isSymbolicFormat = false;
+    std::string                      line;
+    bool                             isSymbolicFormat = false;
 
     while (std::getline(file, line)) {
         // Удаляем пробелы в начале и конце
@@ -42,7 +43,8 @@ Eigen::MatrixXd HadamardFileProvider::readHadamardFile(const std::string& filena
         line.erase(line.find_last_not_of(" \t\r\n") + 1);
 
         // Пропускаем пустые строки
-        if (line.empty()) continue;
+        if (line.empty())
+            continue;
 
         // Определяем формат по первому непустому символу
         char firstChar = line[0];
@@ -63,21 +65,19 @@ Eigen::MatrixXd HadamardFileProvider::readHadamardFile(const std::string& filena
             if (!row.empty()) {
                 rows.push_back(row);
             }
-        }
-        else if (firstChar == '1' || (firstChar >= '0' && firstChar <= '9')) {
+        } else if (firstChar == '1' || (firstChar >= '0' && firstChar <= '9')) {
             isSymbolicFormat = false;
 
-            std::istringstream iss(line);
+            std::istringstream  iss(line);
             std::vector<double> row;
-            double val;
+            double              val;
             while (iss >> val) {
                 row.push_back(val);
             }
             if (!row.empty()) {
                 rows.push_back(row);
             }
-        }
-        else {
+        } else {
             // Строка-комментарий (начинается с буквы или другого символа)
             std::cout << "Пропущена строка-комментарий: " << line << std::endl;
         }
@@ -91,7 +91,8 @@ Eigen::MatrixXd HadamardFileProvider::readHadamardFile(const std::string& filena
     int m = rows[0].size();
 
     if (n != m) {
-        throw std::runtime_error("Матрица не квадратная: " + std::to_string(n) + "x" + std::to_string(m));
+        throw std::runtime_error("Матрица не квадратная: " + std::to_string(n) + "x" +
+                                 std::to_string(m));
     }
 
     Eigen::MatrixXd H(n, n);
@@ -101,7 +102,8 @@ Eigen::MatrixXd HadamardFileProvider::readHadamardFile(const std::string& filena
         }
     }
 
-    std::cout << "Файл прочитан в " << (isSymbolicFormat ? "символьном" : "числовом") << " формате" << std::endl;
+    std::cout << "Файл прочитан в " << (isSymbolicFormat ? "символьном" : "числовом") << " формате"
+              << std::endl;
 
     return H;
 }

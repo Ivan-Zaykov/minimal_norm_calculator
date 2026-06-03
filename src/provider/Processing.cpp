@@ -18,27 +18,29 @@ namespace fs = std::filesystem;
 struct ProgramOptions;
 
 // Функция обработки одной матрицы Адамара
-double Processing::processHadamardMatrix(const Eigen::MatrixXd& H, const ProgramOptions& opts, int matrixCounter) {
-    int order = H.rows();
+double Processing::processHadamardMatrix(const Eigen::MatrixXd& H, const ProgramOptions& opts,
+                                         int matrixCounter) {
+    int order         = H.rows();
     int expectedOrder = opts.dimension + 1;
 
     // Проверка порядка матрицы
     if (order != expectedOrder) {
-        std::cout << "Предупреждение: порядок матрицы " << order
-                  << " не соответствует ожидаемому " << expectedOrder << std::endl;
-        std::cout << "Матрица #" << matrixCounter << ": неверный порядок ("
-                   << order << " вместо " << expectedOrder << ")" << std::endl;
+        std::cout << "Предупреждение: порядок матрицы " << order << " не соответствует ожидаемому "
+                  << expectedOrder << std::endl;
+        std::cout << "Матрица #" << matrixCounter << ": неверный порядок (" << order << " вместо "
+                  << expectedOrder << ")" << std::endl;
         return -1.0;
     }
 
     std::cout << "\n" << std::string(60, '=') << std::endl;
-    std::cout << "Обработка матрицы #" << matrixCounter << " (порядок " << order << ")" << std::endl;
+    std::cout << "Обработка матрицы #" << matrixCounter << " (порядок " << order << ")"
+              << std::endl;
     std::cout << std::string(60, '=') << std::endl;
 
     // Строим симплекс из матрицы Адамара
     auto vertices = HadamardUtils::getVerticesWithLogging(H, order - 1);
 
-    SimplexBasis basis(vertices);
+    SimplexBasis     basis(vertices);
     LebesgueFunction lebesgueFunc(basis);
 
     // Проверка интерполяции
@@ -53,33 +55,34 @@ double Processing::processHadamardMatrix(const Eigen::MatrixXd& H, const Program
     calculator.setNumThreads(opts.numThreads);
     calculator.setLogInterval(opts.logInterval);
 
-    auto start = std::chrono::high_resolution_clock::now();
+    auto   start       = std::chrono::high_resolution_clock::now();
     double maxLebesgue = calculator.calculate();
-    auto end = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::seconds>(end - start);
+    auto   end         = std::chrono::high_resolution_clock::now();
+    auto   duration    = std::chrono::duration_cast<std::chrono::seconds>(end - start);
 
     Eigen::RowVectorXd maxPoint = calculator.getMaxPoint();
 
-    std::cout << "Максимальная константа Лебега: " << std::fixed << std::setprecision(6) << maxLebesgue << std::endl;
+    std::cout << "Максимальная константа Лебега: " << std::fixed << std::setprecision(6)
+              << maxLebesgue << std::endl;
     std::cout << "Время выполнения: " << duration.count() << " секунд" << std::endl;
     std::cout << std::endl;
 
     // Вывод результата
-    std::cout << "ИТОГ для Матрица #" << matrixCounter
-              << ", порядок " << order
-              << ": " << std::fixed << std::setprecision(6) << maxLebesgue
-              << " (за " << duration.count() << " сек)" << std::endl;
+    std::cout << "ИТОГ для Матрица #" << matrixCounter << ", порядок " << order << ": "
+              << std::fixed << std::setprecision(6) << maxLebesgue << " (за " << duration.count()
+              << " сек)" << std::endl;
 
     return maxLebesgue;
 }
 
 // Функция обработки одного файла (может содержать несколько матриц)
-int Processing::processHadamardMatrixFromFile(
-    const std::string& filename, const ProgramOptions& opts,
-    double& globalMin, int& globalMinMatrixIdx, Eigen::RowVectorXd& globalMinPoint) {
-    int matrixCounter = 1;
-    double fileMin = std::numeric_limits<double>::max();
-    int fileMinIdx = -1;
+int Processing::processHadamardMatrixFromFile(const std::string&    filename,
+                                              const ProgramOptions& opts, double& globalMin,
+                                              int&                globalMinMatrixIdx,
+                                              Eigen::RowVectorXd& globalMinPoint) {
+    int                matrixCounter = 1;
+    double             fileMin       = std::numeric_limits<double>::max();
+    int                fileMinIdx    = -1;
     Eigen::RowVectorXd fileMinPoint;
 
     std::cout << "\n" << std::string(80, '=') << std::endl;
@@ -89,12 +92,12 @@ int Processing::processHadamardMatrixFromFile(
     try {
         HadamardMatrixIterator it(filename);
         while (it.hasNext()) {
-            Eigen::MatrixXd H = it.next();
-            double lebesgue = processHadamardMatrix(H, opts, matrixCounter);
+            Eigen::MatrixXd H        = it.next();
+            double          lebesgue = processHadamardMatrix(H, opts, matrixCounter);
 
             if (lebesgue >= 0) {
                 if (lebesgue < fileMin) {
-                    fileMin = lebesgue;
+                    fileMin    = lebesgue;
                     fileMinIdx = matrixCounter;
                 }
             }
@@ -107,13 +110,14 @@ int Processing::processHadamardMatrixFromFile(
 
     if (fileMinIdx != -1) {
         std::cout << "\n>>> МИНИМУМ в файле " << filename << ": матрица #" << fileMinIdx
-                  << " дала значение " << std::fixed << std::setprecision(4) << fileMin << std::endl;
+                  << " дала значение " << std::fixed << std::setprecision(4) << fileMin
+                  << std::endl;
 
         // Обновляем глобальный минимум
         if (fileMin < globalMin) {
-            globalMin = fileMin;
+            globalMin          = fileMin;
             globalMinMatrixIdx = fileMinIdx;
-            globalMinPoint = fileMinPoint;
+            globalMinPoint     = fileMinPoint;
         }
     }
 
@@ -138,8 +142,8 @@ int Processing::processBatch(const ProgramOptions& opts) {
     std::cout << "Найдено файлов для обработки: " << files.size() << std::endl;
 
     // Глобальный минимум
-    double globalMin = std::numeric_limits<double>::max();
-    int globalMinMatrixIdx = -1;
+    double             globalMin          = std::numeric_limits<double>::max();
+    int                globalMinMatrixIdx = -1;
     Eigen::RowVectorXd globalMinPoint;
 
     for (const auto& file : files) {
@@ -149,8 +153,8 @@ int Processing::processBatch(const ProgramOptions& opts) {
     // Вывод глобального минимума
     if (globalMinMatrixIdx != -1) {
         std::cout << "\n" << std::string(80, '*') << std::endl;
-        std::cout << "ГЛОБАЛЬНЫЙ МИНИМУМ: матрица #" << globalMinMatrixIdx
-                  << " дала значение " << std::fixed << std::setprecision(6) << globalMin << std::endl;
+        std::cout << "ГЛОБАЛЬНЫЙ МИНИМУМ: матрица #" << globalMinMatrixIdx << " дала значение "
+                  << std::fixed << std::setprecision(6) << globalMin << std::endl;
         std::cout << std::string(80, '*') << std::endl;
     }
 
@@ -158,109 +162,54 @@ int Processing::processBatch(const ProgramOptions& opts) {
 }
 
 int Processing::processSingleFile(const std::string& filename, const ProgramOptions& opts) {
-    if (opts.fileType == ProgramOptions::FileType::HADAMARD) {
-        double dummyMin;
-        int dummyIdx;
-        Eigen::RowVectorXd dummyPoint;
-        return processHadamardMatrixFromFile(filename, opts, dummyMin, dummyIdx, dummyPoint);
-    }
-    return processSimplexFromFile(opts);
+    double             dummyMin;
+    int                dummyIdx;
+    Eigen::RowVectorXd dummyPoint;
+    return processHadamardMatrixFromFile(filename, opts, dummyMin, dummyIdx, dummyPoint);
 }
 
 int Processing::processSilvester(const ProgramOptions& opts) {
-    auto provider = SimplexProviderFactory::create(
-            SimplexProviderFactory::Type::SILVESTER,
-            opts.dimension,
-            ""
-        );
-        auto vertices = provider->getVertices();
+    auto provider =
+        SimplexProviderFactory::create(SimplexProviderFactory::Type::SILVESTER, opts.dimension, "");
+    auto vertices = provider->getVertices();
 
-        std::cout << "Число вершин симплекса: " << vertices.size() << "\n" << std::endl;
+    std::cout << "Число вершин симплекса: " << vertices.size() << "\n" << std::endl;
 
-        SimplexBasis basis(vertices);
-        LebesgueFunction lebesgueFunc(basis);
+    SimplexBasis     basis(vertices);
+    LebesgueFunction lebesgueFunc(basis);
 
-        std::cout << "\n=== Проверка интерполяции ===" << std::endl;
-        if (!SimplexBasis::verifyInterpolation(basis, 0.00001)) {
-            std::cout << "ВНИМАНИЕ: Интерполяционные свойства не выполняются!" << std::endl;
-            return 1;
-        }
-        std::cout << "ВЕРНО: Интерполяционные свойства выполняются" << "\n" << std::endl;
+    std::cout << "\n=== Проверка интерполяции ===" << std::endl;
+    if (!SimplexBasis::verifyInterpolation(basis, 0.00001)) {
+        std::cout << "ВНИМАНИЕ: Интерполяционные свойства не выполняются!" << std::endl;
+        return 1;
+    }
+    std::cout << "ВЕРНО: Интерполяционные свойства выполняются" << "\n" << std::endl;
 
-        FullEnumUpperBoundCalculator calculator(lebesgueFunc, opts.dimension);
-        calculator.setNumThreads(opts.numThreads);
-        calculator.setLogInterval(opts.logInterval);
+    FullEnumUpperBoundCalculator calculator(lebesgueFunc, opts.dimension);
+    calculator.setNumThreads(opts.numThreads);
+    calculator.setLogInterval(opts.logInterval);
 
-        auto start = std::chrono::high_resolution_clock::now();
-        double maxLebesgue = calculator.calculate();
-        auto end = std::chrono::high_resolution_clock::now();
-        auto duration = std::chrono::duration_cast<std::chrono::seconds>(end - start);
+    auto   start       = std::chrono::high_resolution_clock::now();
+    double maxLebesgue = calculator.calculate();
+    auto   end         = std::chrono::high_resolution_clock::now();
+    auto   duration    = std::chrono::duration_cast<std::chrono::seconds>(end - start);
 
-        std::cout << "\n=== РЕЗУЛЬТАТЫ ===" << std::endl;
-        std::cout << std::fixed << std::setprecision(6);
-        std::cout << "Максимальная константа Лебега: " << maxLebesgue << std::endl;
+    std::cout << "\n=== РЕЗУЛЬТАТЫ ===" << std::endl;
+    std::cout << std::fixed << std::setprecision(6);
+    std::cout << "Максимальная константа Лебега: " << maxLebesgue << std::endl;
 
-        Eigen::RowVectorXd maxPoint = calculator.getMaxPoint();
-        std::cout << "Найдена в вершине: [";
-        for (int i = 0; i < maxPoint.size(); ++i) {
-            std::cout << static_cast<int>(maxPoint(i) + 0.5);
-            if (i + 1 < maxPoint.size()) std::cout << " ";
-        }
-        std::cout << "]" << std::endl;
+    Eigen::RowVectorXd maxPoint = calculator.getMaxPoint();
+    std::cout << "Найдена в вершине: [";
+    for (int i = 0; i < maxPoint.size(); ++i) {
+        std::cout << static_cast<int>(maxPoint(i) + 0.5);
+        if (i + 1 < maxPoint.size())
+            std::cout << " ";
+    }
+    std::cout << "]" << std::endl;
 
-        std::cout << "Время выполнения: " << duration.count() << " секунд" << std::endl;
+    std::cout << "Время выполнения: " << duration.count() << " секунд" << std::endl;
 
-
-        std::cout << "Сильвестр (dim=" << opts.dimension
-                   << "): " << std::fixed << std::setprecision(6) << maxLebesgue
-                   << " (за " << duration.count() << " сек)" << std::endl;
+    std::cout << "Сильвестр (dim=" << opts.dimension << "): " << std::fixed << std::setprecision(6)
+              << maxLebesgue << " (за " << duration.count() << " сек)" << std::endl;
     return 0;
-}
-
-int Processing::processSimplexFromFile(const ProgramOptions& opts) {
-       // Файл с вершинами симплекса (только одна конфигурация)
-        SimplexProviderFactory::Type providerType = SimplexProviderFactory::Type::FROM_SIMPLEX_FILE;
-        auto provider = SimplexProviderFactory::create(providerType, opts.dimension, opts.inputFile);
-        auto vertices = provider->getVertices();
-
-        std::cout << "Число вершин симплекса: " << vertices.size() << "\n" << std::endl;
-
-        SimplexBasis basis(vertices);
-        LebesgueFunction lebesgueFunc(basis);
-
-        std::cout << "\n=== Проверка интерполяции ===" << std::endl;
-        if (!SimplexBasis::verifyInterpolation(basis, 0.00001)) {
-            std::cout << "ВНИМАНИЕ: Интерполяционные свойства не выполняются!" << std::endl;
-            return 1;
-        }
-        std::cout << "ВЕРНО: Интерполяционные свойства выполняются" << "\n" << std::endl;
-
-        FullEnumUpperBoundCalculator calculator(lebesgueFunc, opts.dimension);
-        calculator.setNumThreads(opts.numThreads);
-        calculator.setLogInterval(opts.logInterval);
-
-        auto start = std::chrono::high_resolution_clock::now();
-        double maxLebesgue = calculator.calculate();
-        auto end = std::chrono::high_resolution_clock::now();
-        auto duration = std::chrono::duration_cast<std::chrono::seconds>(end - start);
-
-        std::cout << "\n=== РЕЗУЛЬТАТЫ ===" << std::endl;
-        std::cout << std::fixed << std::setprecision(6);
-        std::cout << "Максимальная константа Лебега: " << maxLebesgue << std::endl;
-
-        Eigen::RowVectorXd maxPoint = calculator.getMaxPoint();
-        std::cout << "Найдена в вершине: [";
-        for (int i = 0; i < maxPoint.size(); ++i) {
-            std::cout << static_cast<int>(maxPoint(i) + 0.5);
-            if (i + 1 < maxPoint.size()) std::cout << " ";
-        }
-        std::cout << "]" << std::endl;
-
-        std::cout << "Время выполнения: " << duration.count() << " секунд" << std::endl;
-
-
-        std::cout << "Симплекс из файла " << opts.inputFile
-                   << ": " << std::fixed << std::setprecision(6) << maxLebesgue
-                   << " (за " << duration.count() << " сек)" << std::endl;
-       return 0;
 }

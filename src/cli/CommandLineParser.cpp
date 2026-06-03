@@ -27,18 +27,13 @@ ProgramOptions CommandLineParser::parse(int argc, char* argv[]) {
         }
         if (arg == "--batch" && i + 1 < argc) {
             opts.batchMode = true;
-            opts.inputDir = argv[++i];
+            opts.inputDir  = argv[++i];
             std::cout << "Пакетный режим. Каталог: " << opts.inputDir << std::endl;
         }
         if (arg == "--load-hadamard" && i + 1 < argc) {
             opts.loadFromFile = true;
-            opts.fileType = ProgramOptions::FileType::HADAMARD;
-            opts.inputFile = argv[++i];
-        }
-        if (arg == "--load-simplex" && i + 1 < argc) {
-            opts.loadFromFile = true;
-            opts.fileType = ProgramOptions::FileType::SIMPLEX;
-            opts.inputFile = argv[++i];
+            opts.fileType     = ProgramOptions::FileType::HADAMARD;
+            opts.inputFile    = argv[++i];
         }
     }
 
@@ -46,9 +41,9 @@ ProgramOptions CommandLineParser::parse(int argc, char* argv[]) {
 }
 
 void CommandLineParser::parseRange(ProgramOptions& opts, int& i, char* argv[]) {
-    opts.partial = true;
+    opts.partial     = true;
     opts.startVertex = std::stoll(argv[++i]);
-    opts.endVertex = std::stoll(argv[++i]);
+    opts.endVertex   = std::stoll(argv[++i]);
     std::cout << "Режим: частичный перебор" << std::endl;
     std::cout << "Диапазон вершин: [" << opts.startVertex << ", " << opts.endVertex << ")"
               << std::endl;
@@ -75,26 +70,37 @@ void CommandLineParser::printHelp(const char* programName) {
     std::cout << "Использование: " << programName << " [ОПЦИИ]" << std::endl;
     std::cout << std::endl;
     std::cout << "ОПЦИИ РАЗМЕРНОСТИ:" << std::endl;
-    std::cout << "  --dimension N       установить размерность пространства (по умолчанию 7)" << std::endl;
+    std::cout << "  --dimension N       установить размерность пространства (по умолчанию 7)"
+              << std::endl;
     std::cout << std::endl;
     std::cout << "ОПЦИИ ПЕРЕБОРА:" << std::endl;
-    std::cout << "  --range START END   частичный перебор вершин в диапазоне [START, END)" << std::endl;
+    std::cout << "  --range START END   частичный перебор вершин в диапазоне [START, END)"
+              << std::endl;
     std::cout << std::endl;
     std::cout << "ОПЦИИ ВЫПОЛНЕНИЯ:" << std::endl;
     std::cout << "  --threads N         количество потоков (0 = автоматически)" << std::endl;
-    std::cout << "  --log-interval N    интервал логирования (количество вершин, по умолчанию 100000)" << std::endl;
+    std::cout
+        << "  --log-interval N    интервал логирования (количество вершин, по умолчанию 100000)"
+        << std::endl;
     std::cout << std::endl;
     std::cout << "ОПЦИИ ЗАГРУЗКИ ДАННЫХ:" << std::endl;
     std::cout << "  --load-hadamard FILE  загрузить матрицу Адамара из файла" << std::endl;
-    std::cout << "  --load-simplex FILE   загрузить вершины симплекса из файла" << std::endl;
     std::cout << "  --batch DIR           пакетная обработка всех файлов в каталоге" << std::endl;
     std::cout << std::endl;
     std::cout << "ПРИМЕРЫ:" << std::endl;
-    std::cout << "  " << programName << "                                              # стандартный режим (dim=7)" << std::endl;
-    std::cout << "  " << programName << " --dimension 31                               # dim=31" << std::endl;
-    std::cout << "  " << programName << " --dimension 31 --threads 16                  # 16 потоков" << std::endl;
-    std::cout << "  " << programName << " --dimension 31 --log-interval 1000000        # логирование каждые 1 млн вершин" << std::endl;
-    std::cout << "  " << programName << " --range 0 500000000                          # частичный перебор" << std::endl;
-    std::cout << "  " << programName << " --load-hadamard ../preset/test_Hadamar_8.txt # загрузка матрицы Адамара" << std::endl;
-    std::cout << "  " << programName << " --load-simplex ../preset/vertices.txt                  # загрузка симплекса" << std::endl;
+    std::cout << "  " << programName
+              << "                                              # стандартный режим (dim=7)"
+              << std::endl;
+    std::cout << "  " << programName << " --dimension 31                               # dim=31"
+              << std::endl;
+    std::cout << "  " << programName << " --dimension 31 --threads 16                  # 16 потоков"
+              << std::endl;
+    std::cout << "  " << programName
+              << " --dimension 31 --log-interval 1000000        # логирование каждые 1 млн вершин"
+              << std::endl;
+    std::cout << "  " << programName
+              << " --range 0 500000000                          # частичный перебор" << std::endl;
+    std::cout << "  " << programName
+              << " --load-hadamard ../preset/test_Hadamar_8.txt # загрузка матрицы Адамара"
+              << std::endl;
 }

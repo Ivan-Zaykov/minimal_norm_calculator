@@ -21,8 +21,8 @@ FullEnumUpperBoundCalculator::FullEnumUpperBoundCalculator(const LebesgueFunctio
     maxPoint_ = Eigen::RowVectorXd::Zero(dim_);
 }
 
-FullEnumUpperBoundCalculator::FullEnumUpperBoundCalculator(const LebesgueFunction& func, int dim, int64_t startVertex,
-                                   int64_t endVertex)
+FullEnumUpperBoundCalculator::FullEnumUpperBoundCalculator(const LebesgueFunction& func, int dim,
+                                                           int64_t startVertex, int64_t endVertex)
     : func_(func),
       dim_(dim),
       globalMax_(0.0),
@@ -113,7 +113,8 @@ double FullEnumUpperBoundCalculator::calculate() {
     int numThreads = numThreads_;
     if (numThreads <= 0) {
         numThreads = std::thread::hardware_concurrency();
-        if (numThreads == 0) numThreads = 8;
+        if (numThreads == 0)
+            numThreads = 8;
     }
 
     if (!partial_) {
