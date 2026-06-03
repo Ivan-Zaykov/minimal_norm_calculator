@@ -1,4 +1,4 @@
-#include "factory/SimplexProviderFactory.h"
+#include "vertices_provider/SimplexProviderFactory.h"
 #include "vertices_provider/SilvesterMethodProvider.h"
 #include "vertices_provider/HadamardFileProvider.h"
 

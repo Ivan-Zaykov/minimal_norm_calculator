@@ -2,7 +2,7 @@
 
 #include "basis/SimplexBasis.h"
 #include "cli/CommandLineParser.h"
-#include "factory/SimplexProviderFactory.h"
+#include "vertices_provider/SimplexProviderFactory.h"
 #include "upper_bound_calculator/FullEnumUpperBoundCalculator.h"
 #include "upper_bound_calculator/LebesgueFunction.h"
 #include "utils/HadamardMatrixIterator.h"
