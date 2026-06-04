@@ -1,0 +1,386 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[english, russian]{babel}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{enumitem}%оформление списков
+\usepackage{varwidth}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{indentfirst}
+\usepackage{url}
+\usepackage{seqsplit}
+\usepackage{pdflscape}
+\usepackage{tabularx}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{mathtools}
+\usepackage{hyperref}
+\usepackage[backend=biber, style=numeric, sorting=none]{biblatex}
+\usepackage{titlesec}
+\usepackage{appendix}
+\usepackage{alltt}
+
+\addbibresource{my_libs.bib}
+
+
+\usepackage[a4paper, top=20mm, left=30mm, right=20mm, bottom=20mm]{geometry}
+\newcommand{\dim}{\mathrm{dim}}
+\newcommand{\lin}{\mathrm{lin}}
+\newcommand{\diag}{\mathrm{diag}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Rn}{\mathbb{R^n}}
+
+\lstset{
+    language=C++,
+    basicstyle=\ttfamily\small,
+    numbers=left,
+    stepnumber=1,
+    breaklines=true,
+    breakatwhitespace=true,
+    keepspaces=true,
+    tabsize=4,
+    showspaces=false,
+    showstringspaces=false,
+    extendedchars=\true,
+}
+
+\begin{document}
+\appendix
+\section{Исходный код}
+\begin{lstlisting}
+// Файл: ./src/main.cpp
+
+#include "cli/CommandLineParser.h"
+#include "../include/processing/Processing.h"
+#include <iostream>
+
+int main(int argc, char* argv[]) {
+//  РАЗБОР АРГУМЕНТОВ КОМАНДНОЙ СТРОКИ
+    ProgramOptions opts = CommandLineParser::parse(argc, argv);
+
+    if (opts.showHelp) {
+        CommandLineParser::printHelp(argv[0]);
+        return 0;
+    }
+
+    if (!opts.partial) {
+        std::cout << "Режим: полный перебор всех вершин" << std::endl;
+    }
+
+    if (opts.batchMode && !opts.inputDir.empty()) {
+//  ПАКЕТНАЯ ОБРАБОТКА
+        return Processing::processBatch(opts);
+    }
+
+    if (opts.loadFromFile && !opts.inputFile.empty()) {
+//  ОБРАБОТКА ОДИНОЧНОГО ФАЙЛА
+        return Processing::processSingleFile(opts.inputFile, opts);
+    }
+
+// СТАНДАРТНОЕ ПОСТРОЕНИЕ (СИЛЬВЕСТР)
+    return Processing::processSilvester(opts);
+}
+
+=========================================================
+// Файл: ./include/basis/SimplexBasis.h
+
+#pragma once
+#include <Eigen/Dense>
+#include <vector>
+
+class SimplexBasis {
+   public:
+    explicit SimplexBasis(const std::vector<Eigen::RowVectorXd>& vertices);
+    [[nodiscard]] int    size() const;
+    [[nodiscard]] double value(int i, const Eigen::RowVectorXd& x) const;
+    static bool          verifyInterpolation(const SimplexBasis& basis, double tolerance);
+    [[nodiscard]] const std::vector<Eigen::RowVectorXd>& getVertices() const {
+        return vertices_;
+    }
+
+   private:
+    std::vector<Eigen::RowVectorXd> vertices_;
+    int                             dim_;
+    Eigen::MatrixXd                 Ainv_;
+
+   public:
+    [[nodiscard]] Eigen::MatrixXd getAinv() const {
+        return Ainv_;
+    }
+};
+
+=========================================================
+// Файл: ./include/cli/CommandLineParser.h
+
+#pragma once
+#include <string>
+#include <cstdint>
+
+struct ProgramOptions {
+// Режим перебора
+    bool    partial     = false;
+    int64_t startVertex = 0;
+    int64_t endVertex   = 0;
+    int     dimension   = 7;
+
+// Параметры выполнения
+    int numThreads = 0;  // 0 = автоматически (hardware_concurrency)
+    int64_t logInterval = 10'000'000;  // интервал логирования (количество вершин)
+
+// Режим загрузки данных
+    bool        loadFromFile = false;
+    bool        batchMode    = false;
+    std::string inputFile;
+    std::string inputDir;
+    enum class FileType { HADAMARD } fileType = FileType::HADAMARD;
+
+// Помощь
+    bool showHelp = false;
+};
+
+class CommandLineParser {
+   public:
+    static ProgramOptions parse(int argc, char* argv[]);
+    static void           printHelp(const char* programName);
+
+   private:
+    static void parseRange(ProgramOptions& opts, int& i, char* argv[]);
+    static void parseDimension(ProgramOptions& opts, int& i, char* argv[]);
+    static void parseThreads(ProgramOptions& opts, int& i, char* argv[]);
+    static void parseLogInterval(ProgramOptions& opts, int& i, char* argv[]);
+};
+
+=========================================================
+// Файл: ./include/hadamard_utils/HadamardMatrixIterator.h
+
+#pragma once
+#include <string>
+#include <vector>
+#include <fstream>
+#include <Eigen/Dense>
+
+class HadamardMatrixIterator {
+   public:
+    explicit HadamardMatrixIterator(const std::string& filename);
+
+    void            reset();
+    bool            hasNext() const;
+    Eigen::MatrixXd next();
+
+   private:
+    std::string   filename_;
+    std::ifstream file_;
+    int           currentOrder_;
+
+    static bool isCommentLine(const std::string& line);
+    static bool isSymbolicLine(const std::string& line);
+    static bool isNumericLine(const std::string& line);
+
+    static std::vector<double> parseLine(const std::string& line);
+    Eigen::MatrixXd            readNextMatrix();
+};
+
+=========================================================
+// Файл: ./include/hadamard_utils/HadamardUtils.h
+
+#pragma once
+#include <Eigen/Dense>
+#include <vector>
+
+class HadamardUtils {
+   public:
+    static std::vector<Eigen::RowVectorXd> getVerticesWithLogging(const Eigen::MatrixXd& H,
+                                                                  int                    dim);
+    static bool isHadamardMatrix(const Eigen::MatrixXd& H, double tolerance = 1e-10);
+
+   private:
+// Преобразование матрицы Адамара в (0/1)-матрицу D
+    static Eigen::MatrixXd hadamardTo01Matrix(const Eigen::MatrixXd& H);
+
+// Построение вершин симплекса из (0/1)-матрицы D
+    static std::vector<Eigen::RowVectorXd> buildVerticesFrom01Matrix(const Eigen::MatrixXd& D);
+};
+
+=========================================================
+// Файл: ./include/processing/Processing.h
+
+#pragma once
+#include <string>
+#include <Eigen/Dense>
+
+struct ProgramOptions;
+
+class Processing {
+    static int    processHadamardMatrixFromFile(const std::string&    filename,
+                                                const ProgramOptions& opts, double& globalMin,
+                                                int&                globalMinMatrixIdx,
+                                                Eigen::RowVectorXd& globalMinPoint);
+    static double processHadamardMatrix(const Eigen::MatrixXd& H, const ProgramOptions& opts,
+                                        int matrixCounter);
+
+   public:
+    static int processBatch(const ProgramOptions& opts);
+    static int processSingleFile(const std::string& filename, const ProgramOptions& opts);
+    static int processSilvester(const ProgramOptions& opts);
+};
+
+=========================================================
+// Файл: ./include/upper_bound_calculator/FullEnumUpperBoundCalculator.h
+
+#pragma once
+#include "upper_bound_calculator/UpperBoundCalculatorInterface.h"
+#include "upper_bound_calculator/LebesgueFunction.h"
+#include <atomic>
+#include <Eigen/Dense>
+
+class FullEnumUpperBoundCalculator : public UpperBoundCalculatorInterface {
+   public:
+    FullEnumUpperBoundCalculator(const LebesgueFunction& func, int dim);
+
+    FullEnumUpperBoundCalculator(const LebesgueFunction& func, int dim, int64_t startVertex,
+                                 int64_t endVertex);
+
+// Запуск перебора. Возвращает максимальное значение константы Лебега
+    double calculate() override;
+
+    [[nodiscard]] Eigen::RowVectorXd getMaxPoint() const override {
+        return maxPoint_;
+    }
+
+   private:
+    const LebesgueFunction& func_;
+    int                     dim_;
+    Eigen::RowVectorXd      maxPoint_;
+    std::atomic<double>     globalMax_;
+    std::atomic<int64_t>    processedVertices_;
+    std::atomic<int64_t>    lastLogged_;
+    std::atomic<int64_t>    currentBestVertex_;
+
+// Параметры частичного перебора
+    int64_t startVertex_;
+    int64_t endVertex_;
+    bool    partial_;
+};
+
+=========================================================
+// Файл: ./include/upper_bound_calculator/LebesgueFunction.h
+
+#pragma once
+#include "basis/SimplexBasis.h"
+
+class LebesgueFunction {
+   public:
+    explicit LebesgueFunction(const SimplexBasis& basis);
+    double operator()(const Eigen::RowVectorXd& x) const;
+
+   private:
+    const SimplexBasis& basis_;
+};
+
+=========================================================
+// Файл: ./include/upper_bound_calculator/UpperBoundCalculatorInterface.h
+
+#pragma once
+#include <Eigen/Dense>
+
+class UpperBoundCalculatorInterface {
+   public:
+    virtual ~UpperBoundCalculatorInterface() = default;
+
+// Запуск оптимизации. Возвращает максимальное значение функции
+    virtual double calculate() = 0;
+
+    void setNumThreads(int numThreads) {
+        numThreads_ = numThreads;
+    }
+    void setLogInterval(int64_t interval) {
+        logInterval_ = interval;
+    }
+
+// Возвращает точку куба, на которой достигнут максимум
+    [[nodiscard]] virtual Eigen::RowVectorXd getMaxPoint() const = 0;
+
+   protected:
+    int     numThreads_  = 0;
+    int64_t logInterval_ = 10'000'000;
+};
+
+
+=========================================================
+// Файл: ./include/vertices_provider/HadamardFileProvider.h
+
+#pragma once
+#include "vertices_provider/ISimplexProvider.h"
+#include "hadamard_utils/HadamardMatrixIterator.h"
+
+#include <string>
+
+class HadamardFileProvider : public ISimplexProvider {
+   public:
+    explicit HadamardFileProvider(const std::string& filename);
+    std::vector<Eigen::RowVectorXd> getVertices() override;
+    int                             getDimension() const override {
+        return dim_;
+    }
+    HadamardMatrixIterator getIterator(const std::string& filename);
+
+   private:
+    static Eigen::MatrixXd readHadamardFile(const std::string& filename);
+    Eigen::MatrixXd        H_;
+    std::string            filename_;
+    int                    dim_;
+};
+
+=========================================================
+// Файл: ./include/vertices_provider/ISimplexProvider.h
+
+#pragma once
+#include <Eigen/Dense>
+#include <vector>
+
+class ISimplexProvider {
+   public:
+    virtual ~ISimplexProvider()                                  = default;
+    virtual std::vector<Eigen::RowVectorXd> getVertices()        = 0;
+    virtual int                             getDimension() const = 0;
+};
+
+=========================================================
+// Файл: ./include/vertices_provider/SilvesterMethodProvider.h
+
+#pragma once
+#include "vertices_provider/ISimplexProvider.h"
+
+class SilvesterMethodProvider : public ISimplexProvider {
+   public:
+    explicit SilvesterMethodProvider(int dim);
+    std::vector<Eigen::RowVectorXd> getVertices() override;
+    ;
+    int getDimension() const override {
+        return dim_;
+    };
+    static Eigen::MatrixXd hadamardMatrix(int order);
+
+   private:
+    int             dim_;
+    Eigen::MatrixXd H_;
+};
+
+=========================================================
+// Файл: ./include/vertices_provider/SimplexProviderFactory.h
+
+#pragma once
+#include "vertices_provider/ISimplexProvider.h"
+#include <memory>
+#include <string>
+
+class SimplexProviderFactory {
+   public:
+    enum class Type { SILVESTER, FROM_HADAMARD_FILE };
+
+    static std::unique_ptr<ISimplexProvider> create(Type type, int dim = 0,
+                                                    const std::string& filename = "");
+};
+
+\end{lstlisting}
+\end{document}
