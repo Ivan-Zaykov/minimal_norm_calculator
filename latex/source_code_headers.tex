@@ -33,7 +33,7 @@
 \lstset{
     language=C++,
     basicstyle=\ttfamily\small,
-    numbers=left,
+    numbers=none,
     stepnumber=1,
     breaklines=true,
     breakatwhitespace=true,
@@ -44,9 +44,21 @@
     extendedchars=\true,
 }
 
+\newcommand{\setupappendix}{
+  \setcounter{section}{1} % Сбрасываем счетчик разделов для приложений
+  \renewcommand{\thesection}{\Alph{section}} % Буквенная нумерация (А, Б, В...)
+
+  % Настройка отображения самого заголовка в тексте (по правому краю)
+  \titleformat{\section}[display]
+    {\normalfont\Large\bfseries\filleft}
+    {Приложение \thesection}
+    {10pt}
+    {\Large}
+}
+
 \begin{document}
-\appendix
-\section{Исходный код}
+\setupappendix
+\section[Приложение \thesection]{Заголовочные файлы}
 \begin{lstlisting}
 // Файл: ./src/main.cpp
 
@@ -240,7 +252,7 @@ class FullEnumUpperBoundCalculator : public UpperBoundCalculatorInterface {
     FullEnumUpperBoundCalculator(const LebesgueFunction& func, int dim, int64_t startVertex,
                                  int64_t endVertex);
 
-// Запуск перебора. Возвращает максимальное значение константы Лебега
+// Запуск перебора. Возвращает максимальное значение суммы модулей базисных многочленов
     double calculate() override;
 
     [[nodiscard]] Eigen::RowVectorXd getMaxPoint() const override {
@@ -379,8 +391,6 @@ class SimplexProviderFactory {
     enum class Type { SILVESTER, FROM_HADAMARD_FILE };
 
     static std::unique_ptr<ISimplexProvider> create(Type type, int dim = 0,
-                                                    const std::string& filename = "");
-};
-
+                                                    const std::string& filename = "");};
 \end{lstlisting}
 \end{document}
