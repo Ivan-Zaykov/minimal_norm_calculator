@@ -62,7 +62,7 @@ double Processing::processHadamardMatrix(const Eigen::MatrixXd& H, const Program
 
     Eigen::RowVectorXd maxPoint = calculator.getMaxPoint();
 
-    std::cout << "Максимальная константа Лебега: " << std::fixed << std::setprecision(6)
+    std::cout << "Максимальная сумма модулей: " << std::fixed << std::setprecision(6)
               << maxLebesgue << std::endl;
     std::cout << "Время выполнения: " << duration.count() << " секунд" << std::endl;
     std::cout << std::endl;
@@ -196,7 +196,7 @@ int Processing::processSilvester(const ProgramOptions& opts) {
 
     std::cout << "\n=== РЕЗУЛЬТАТЫ ===" << std::endl;
     std::cout << std::fixed << std::setprecision(6);
-    std::cout << "Максимальная константа Лебега: " << maxLebesgue << std::endl;
+    std::cout << "Максимальная сумма модулей: " << maxLebesgue << std::endl;
 
     Eigen::RowVectorXd maxPoint = calculator.getMaxPoint();
     std::cout << "Найдена в вершине: [";

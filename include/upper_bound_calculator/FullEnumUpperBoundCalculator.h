@@ -11,7 +11,7 @@ class FullEnumUpperBoundCalculator : public UpperBoundCalculatorInterface {
     FullEnumUpperBoundCalculator(const LebesgueFunction& func, int dim, int64_t startVertex,
                                  int64_t endVertex);
 
-    // Запуск перебора. Возвращает максимальное значение константы Лебега
+    // Запуск перебора. Возвращает максимальное значение суммы модулей базисных многочленов
     double calculate() override;
 
     [[nodiscard]] Eigen::RowVectorXd getMaxPoint() const override {

@@ -164,7 +164,7 @@ double FullEnumUpperBoundCalculator::calculate() {
               << std::endl;
 
     std::cout << std::fixed << std::setprecision(3);
-    std::cout << "Максимальная константа Лебега: " << globalMax_.load() << std::endl;
+    std::cout << "Максимальная сумма модулей: " << globalMax_.load() << std::endl;
 
     int64_t bestIdx = currentBestVertex_.load();
     for (int i = 0; i < dim_; ++i) {
