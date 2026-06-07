@@ -670,46 +670,71 @@ V = \{0, \operatorname{row}_1(D), \operatorname{row}_2(D), \dots, \operatorname{
 
 \newpage
 
-% \begin{table}[h]
-% \centering
-% \caption{Верхние оценки минимальной нормы интерполяционного проектора $\theta_n$}
-% \label{tab:theta_estimates_full}
-% \begin{tabular}{|c|c|c|c|}
-% \hline
-% $n$ & $\min\|P\|$ & $\theta_n \leq$ &  \\
-% \hline
-% 1 & 1 & 1 & $\theta_1 = 1$ & N \\
-% 2 & 3 & $\frac{2}{5}\sqrt{5} + 1 = 1.8944\ldots$ & N \\
-% 3 & $2.5$ & $\frac{13}{5} = 2.6$ & N \\
-% 4 & $\frac{13}{5} = 2.6$ & $\frac{7}{3} = 2.3333\ldots$ & N \\
-% 5 & $2.5$ & $\frac{13}{5} = 2.6$ & K \\
-% 6 & $3.1428$ & $3.1428$ & L \\
-% 7 & $2.5$ & $2.5$ & N \\
-% 8 & $3.1428$ & $3.1428$ & M \\
-% 9 & $3.8$ & $3.8$ & M \\
-% 10 & $3.8$ & $3.5186$ & L \\
-% 11 & $3.7692$ & $3.7692$ & H \\
-% 12 & $3.4$ & $3.4$ & M \\
-% 13 & $3.7692$ & $3.7692$ & M \\
-% 14 & $4.2$ & $4.0156$ & L \\
-% 15 & $3.5$ & $3.5$ & H \\
-% 16 & $4.2$ & $4.2$ & M \\
-% 17 & $4.0882$ & $4.0882$ & M \\
-% 18 & $5.5882$ & $5.14006$ & L \\
-% 19 & $4.7241$ & $4.7241$ & H \\
-% 20 & $4.7241$ & $4.68879$ & L \\
-% 21 & $5.02$ & $5.02$ & M \\
-% 22 & $5.4238$ & $5.4238$ & M \\
-% 23 & $4.5$ & $4.5$ & O \\
-% 24 & $4.9047$ & $4.9047$ & M \\
-% 25 & $5.2087$ & $5.2087$ & M \\
-% 26 & $5.2087$ & $5.2087$ & M \\
-% 27 & $5.0$ & $5.0$ & U \\
-% \hline
-% \multicolumn{4}{l}{\footnotesize\textit{Примечание:} N — Невский, K — \cite{...}, L — \cite{...}, M — \cite{...},} \\
-% \multicolumn{4}{l}{\footnotesize\textit{H — Хлесткова, O — \cite{...}, U — оценка, полученная в настоящей работе.}} \\
-% \end{tabular}
-% \end{table}
+\begin{table}[h]
+\centering
+\caption{Верхние оценки минимальной нормы интерполяционного проектора $\theta_n$ для $1 \le n \le 27$}
+\label{tab:theta_estimates}
+\begin{tabular}{|c|c|c|}
+\hline
+$n$ & $\min\|P\|$ & $\theta_n \le$ \\
+\hline
+1 & 1 & 1 \\
+\hline
+2 & 3 & $\frac{2\sqrt{5}}{5}+1 = 1.8944\ldots$ \\
+\hline
+3 & 2 & 2 \\
+\hline
+4 & $\frac{7}{3} = 2.3333\ldots$ & $\frac{3(4+\sqrt{2})}{7} = 2.3203\ldots$ \\
+\hline
+5 & $\frac{13}{5} = 2.6$ & $2.448804$ \\
+\hline
+6 & 3 & $2.60004\ldots$ \\
+\hline
+7 & $\frac{5}{2} = 2.5$ & $\frac{5}{2} = 2.5$ \\
+\hline
+8 & $\frac{22}{7} = 3.1428\ldots$ & $\frac{22}{7} = 3.1428\ldots$ \\
+\hline
+9 & 3 & 3 \\
+\hline
+10 & $\frac{19}{5} = 3.8$ & $\frac{19}{5} = 3.8\ldots$ \\
+\hline
+11 & 3 & 3 \\
+\hline
+12 & $\frac{17}{5} = 3.4$ & $\frac{17}{5} = 3.4$ \\
+\hline
+13 & $\frac{49}{13} = 3.7692\ldots$ & $\frac{49}{13} = 3.7692\ldots$ \\
+\hline
+14 & $\frac{21}{5} = 4.2$ & $\frac{21}{5} = 4.2\ldots$ \\
+\hline
+15 & $\frac{7}{2} = 3.5$ & $\frac{7}{2} = 3.5$ \\
+\hline
+16 & $\frac{21}{5} = 4.2$ & $\frac{21}{5} = 4.2$ \\
+\hline
+17 & $\frac{139}{34} = 4.0882\ldots$ & $\frac{139}{34} = 4.0882\ldots$ \\
+\hline
+18 & $\frac{95}{17} = 5.5882\ldots$ & $5.14006\ldots$ \\
+\hline
+19 & 4 & 4 \\
+\hline
+20 & $\frac{137}{29} = 4.7241\ldots$ & $4.68879\ldots$ \\
+\hline
+21 & $\frac{251}{50} = 5.02$ & $\frac{251}{50} = 5.02$ \\
+\hline
+22 & $\frac{1817}{335} = 5.4238\ldots$ & $\frac{1817}{335} = 5.4238\ldots$ \\
+\hline
+23 & $\frac{9}{2} = 4.5$ & $\frac{9}{2} = 4.5$ \\
+\hline
+24 & $\frac{103}{21} = 4.9047\ldots$ & $\frac{103}{21} = 4.9047\ldots$ \\
+\hline
+25 & 5 & 5 \\
+\hline
+26 & $\frac{474}{91} = 5.2087\ldots$ & $\frac{474}{91} = 5.2087\ldots$ \\
+\hline
+27 & $5.0$ & $5.0$ \\
+\hline
+\end{tabular}
+\end{table}
+\newpage
 
 \newpage
 
