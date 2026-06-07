@@ -76,18 +76,6 @@
 \setcounter{subsection}{0}
 \setcounter{equation}{0}
 
-\newcommand{\setupappendix}{
-  \setcounter{section}{0} % Сбрасываем счетчик разделов для приложений
-  \renewcommand{\thesection}{\Alph{section}} % Буквенная нумерация (А, Б, В...)
-
-  % Настройка отображения самого заголовка в тексте (по правому краю)
-  \titleformat{\section}[display]
-    {\normalfont\Large\bfseries\filleft}
-    {Приложение \thesection}
-    {10pt}
-    {\Large}
-}
-
 \begin{document}
 \pagenumbering{arabic}
 \setcounter{page}{1}
@@ -755,8 +743,8 @@ $n$ & $\min\|P\|$ & $\theta_n \le$ \\
 
 % ============================================================================
 
-\setupappendix
-\section[Приложение \thesection]{Структура исходного кода}
+\section*{Приложение A. Структура исходного кода}
+\addcontentsline{toc}{section}{Приложение A. Структура исходного кода}
 
 Программа реализована на языке C++ (стандарт C++17). Для линейно-алгебраических операций используется библиотека Eigen. Сборка осуществляется с помощью CMake. Ниже приведена структура исходного кода:
 
@@ -827,8 +815,8 @@ make -j$(nproc)
 
 \newpage
 
-\setupappendix
-\section[Приложение \thesection]{Заголовочные файлы}
+\section*{Приложение B. Заголовочные файлы}
+\addcontentsline{toc}{section}{Приложение B. Заголовочные файлы}
 
 \begin{lstlisting}
 // Файл: ./src/main.cpp
@@ -1167,8 +1155,9 @@ class SimplexProviderFactory {
 
 \newpage
 
-\setupappendix
-\section[Приложение \thesection]{Реализация}
+\section*{Приложение C. Реализация}
+\addcontentsline{toc}{section}{Приложение C. Реализация}
+
 \begin{lstlisting}
 // Файл: ./src/basis/SimplexBasis.cpp
 
