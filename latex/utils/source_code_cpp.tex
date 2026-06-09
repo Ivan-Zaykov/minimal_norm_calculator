@@ -44,21 +44,10 @@
     extendedchars=\true,
 }
 
-\newcommand{\setupappendix}{
-  \setcounter{section}{2} % Сбрасываем счетчик разделов для приложений
-  \renewcommand{\thesection}{\Alph{section}} % Буквенная нумерация (А, Б, В...)
-
-  % Настройка отображения самого заголовка в тексте (по правому краю)
-  \titleformat{\section}[display]
-    {\normalfont\Large\bfseries\filleft}
-    {Приложение \thesection}
-    {10pt}
-    {\Large}
-}
-
 \begin{document}
-\setupappendix
-\section[Приложение \thesection]{Реализация}
+\pagenumbering{arabic}
+\setcounter{page}{29}
+\section*{Приложение C. Реализация}
 \begin{lstlisting}
 // Файл: ./src/basis/SimplexBasis.cpp
 

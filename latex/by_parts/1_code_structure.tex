@@ -1,0 +1,77 @@
+\documentclass[appendix_A]{subfiles}
+
+\begin{document}
+
+\section*{Приложение A. Структура исходного кода}
+\addcontentsline{toc}{section}{Приложение A. Структура исходного кода}
+
+Программа реализована на языке C++ (стандарт C++17). Для линейно-алгебраических операций используется библиотека Eigen. Сборка осуществляется с помощью CMake. Ниже приведена структура исходного кода:
+
+\begin{verbatim}
+├── main.cpp                     # точка входа в программу
+
+include/
+├── basis/
+│   └── SimplexBasis.h           # базис Лагранжа (барицентрические координаты)
+├── cli/
+│   └── CommandLineParser.h      # разбор аргументов командной строки
+├── hadamard_utils/
+│   ├── HadamardMatrixIterator.h # итератор для чтения матриц Адамара из файла
+│   └── HadamardUtils.h          # вспомогательные функции для матриц Адамара
+├── processing/
+│   └── Processing.h             # организация основных вычислительных режимов
+├── upper_bound_calculator/
+│   ├── FullEnumUpperBoundCalculator.h # многопоточный перебор вершин
+│   ├── LebesgueFunction.h       # вычисление значения функции Лебега в точке
+│   └── UpperBoundCalculatorInterface.h # интерфейс для вычисления верхней границы
+└── vertices_provider/
+    ├── HadamardFileProvider.h   # загрузка матриц Адамара из файла
+    ├── ISimplexProvider.h       # интерфейс для получения вершин симплекса
+    ├── SilvesterMethodProvider.h # построение симплекса методом Сильвестра
+    └── SimplexProviderFactory.h # фабрика для создания провайдеров
+
+src/
+├── basis/
+│   └── SimplexBasis.cpp
+├── cli/
+│   └── CommandLineParser.cpp
+├── hadamard_utils/
+│   ├── HadamardMatrixIterator.cpp
+│   └── HadamardUtils.cpp
+├── processing/
+│   └── Processing.cpp
+├── upper_bound_calculator/
+│   ├── FullEnumUpperBoundCalculator.cpp
+│   └── LebesgueFunction.cpp
+└── vertices_provider/
+    ├── HadamardFileProvider.cpp
+    ├── SilvesterMethodProvider.cpp
+    └── SimplexProviderFactory.cpp
+\end{verbatim}
+
+\subsection*{Компиляция и запуск}
+
+Для компиляции программы необходимо установить библиотеку Eigen и систему сборки CMake. Команды для сборки:
+
+\begin{verbatim}
+mkdir build && cd build
+cmake -DCMAKE_BUILD_TYPE=Release ..
+make -j$(nproc)
+\end{verbatim}
+
+Примеры запуска:
+
+\begin{verbatim}
+# Стандартное построение (Сильвестр) для размерности 31
+./HadamardSimplexNorm --dimension 31
+
+# Пакетная обработка всех файлов в каталоге
+./HadamardSimplexNorm --batch ../input --output results.txt
+
+# Загрузка матрицы Адамара из файла
+./HadamardSimplexNorm --load-hadamard input/hadamard_32.txt --dimension 31
+\end{verbatim}
+
+\newpage
+
+\end{document}

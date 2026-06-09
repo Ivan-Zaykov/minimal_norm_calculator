@@ -1,0 +1,161 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[english, russian]{babel}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{enumitem}%оформление списков
+\usepackage{varwidth}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{indentfirst}
+\usepackage{url}
+\usepackage{seqsplit}
+\usepackage{pdflscape}
+\usepackage{tabularx}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{mathtools}
+\usepackage{hyperref}
+\usepackage[backend=biber, style=numeric, sorting=none]{biblatex}
+\usepackage{titlesec}
+\usepackage{appendix}
+\usepackage{alltt}
+\usepackage[hidelinks]{hyperref}
+\usepackage{booktabs}
+
+\addbibresource{my_libs.bib}
+
+
+\usepackage[a4paper, top=20mm, left=30mm, right=20mm, bottom=20mm]{geometry}
+\newcommand{\dim}{\mathrm{dim}}
+\newcommand{\lin}{\mathrm{lin}}
+\newcommand{\diag}{\mathrm{diag}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Rn}{\mathbb{R^n}}
+
+\lstset{
+    language=C++,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    commentstyle=\color{green!60!black},
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    breaklines=true,
+    breakatwhitespace=true,
+    tabsize=4,
+    showspaces=false,
+    showstringspaces=false
+}
+
+\newtheoremstyle{indented}% отступ
+{3pt}% над
+{3pt}% под
+{\itshape}% шрифт тела, переключатель
+{\parindent}% отступ
+{\bfseries}% шрифт заголовка
+{.}% точка после заголовка
+{.5em}% отступ от заголовка
+{}% head spec (empty = ‘normal’)
+
+\theoremstyle{indented}
+\newtheorem{theorem}{Теорема}
+\newtheorem*{theorem*}{Теорема}
+\newtheorem{definition}{Определение}
+\newtheorem*{definition*}{Определение}
+\newtheorem{following}{Следствие}
+\newtheorem*{following*}{Следствие}
+\newtheorem{statement}{Утверждение}
+\newtheorem*{statement*}{Утверждение}
+
+\renewcommand{\thesection}{\arabic{section}.}
+\renewcommand{\thesubsection}{\arabic{section}.\arabic{subsection}.}
+\renewcommand{\thesubsubsection}{\arabic{section}.\arabic{subsection}.\arabic{subsubsection}.}
+
+\setcounter{section}{0}
+\setcounter{subsection}{0}
+\setcounter{equation}{0}
+
+\usepackage{subfiles}
+
+\begin{document}
+\pagenumbering{arabic}
+\setcounter{page}{1}
+\pagestyle{empty}
+\begin{center}
+\textbf{Министерство науки и высшего образования Российской Федерации}
+\\
+\vspace{0.5cm}
+\textbf{Федеральное государственное бюджетное образовательное\\
+учреждение высшего образования} \\
+\textbf{«Ярославский государственный университет им. П.Г. Демидова»}
+
+\vspace{0.5cm}
+
+Кафедра математического анализа
+\vfill
+
+\begin{flushright}
+  Сдано на кафедру\\
+  « \underline{\hspace{0.8cm}} » \underline{\hspace{3cm}} 2026 г.\\
+  Заведующий кафедрой \\
+  \underline{д. ф.-м. н., доцент }\\
+  \underline{\hspace{3.4cm}} Невский М.В.\\
+\end{flushright}
+\vfill
+
+Выпускная квалификационная работа магистра \\
+
+\vspace{0.5cm}
+
+\textbf{Задача о минимальной норме интерполяционного проектора} \\
+(Направление подготовки магистров 01.03.02 Прикладная математика и информатика)
+\vfill
+
+
+\bigskip
+
+
+\end{center}
+
+\begin{flushright}
+Научный руководитель\\
+\underline{к. ф.-м. н., доцент }\\
+\underline{\hspace{3.4cm}} Ухалов А.Ю.\\
+« \underline{\hspace{0.8cm}} » \underline{\hspace{3cm}} 2026 г.\\
+\vspace{1.5cm}
+Студент группы \underline{ПМИ-21МО}\\
+\underline{\hspace{3.5cm}} Зайков И.В. \\
+« \underline{\hspace{0.8cm}} » \underline{\hspace{3cm}} 2026 г.\\
+\end{flushright}
+
+\vspace{0.5cm}
+\begin{center}
+Ярославль 2026 г.
+\end{center}
+\newpage
+
+\section*{Реферат}
+\addcontentsline{section}{Реферат}
+
+Объем 52 страницы, 5 параграфов, 2 таблицы, 3 приложения. Список цитированной литературы содержит 6 источников.
+\par
+Изучается интерполяция непрерывной функции $f(x)$, определенной на кубе
+$Q_n = [0, 1]^n$ , с помощью полиномов от $n$ переменных степени не выше 1. Ставится
+задача оценивания минимальной нормы проектора для $n = 31$. Верхняя оценка $\theta_{31}$
+получается из рассмотрения проектора с узлами интерполяции, совпадающими с
+вершинами симплекса максимального объема в $Q_n$, построенного на основе матрицы Адамара. Получена новая оценка $\theta_{31} \leq 5.0$.
+\par
+\textbf{Ключевые слова: интерполяция, интерполяционный проектор, норма, матрица Адамара, симплекс максимального объема.}
+
+\newpage
+
+\pagestyle{plain}
+\tableofcontents
+
+\newpage
+\subfile{main/0_main}
+\subfile{main/1_code_structure}
+\subfile{main/2_source_code_headers}
+
+\end{document}

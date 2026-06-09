@@ -1,64 +1,8 @@
-\documentclass[a4paper,12pt]{article}
-\usepackage[utf8]{inputenc}
-\usepackage[english, russian]{babel}
-\usepackage{amsmath, amssymb, amsthm}
-\usepackage{enumitem}%оформление списков
-\usepackage{varwidth}
-\usepackage{graphicx}
-\usepackage{float}
-\usepackage{indentfirst}
-\usepackage{url}
-\usepackage{seqsplit}
-\usepackage{pdflscape}
-\usepackage{tabularx}
-\usepackage{xcolor}
-\usepackage{listings}
-\usepackage{mathtools}
-\usepackage{hyperref}
-\usepackage[backend=biber, style=numeric, sorting=none]{biblatex}
-\usepackage{titlesec}
-\usepackage{appendix}
-\usepackage{alltt}
-
-\addbibresource{my_libs.bib}
-
-
-\usepackage[a4paper, top=20mm, left=30mm, right=20mm, bottom=20mm]{geometry}
-\newcommand{\dim}{\mathrm{dim}}
-\newcommand{\lin}{\mathrm{lin}}
-\newcommand{\diag}{\mathrm{diag}}
-\newcommand{\R}{\mathbb{R}}
-\newcommand{\Rn}{\mathbb{R^n}}
-
-\lstset{
-    language=C++,
-    basicstyle=\ttfamily\small,
-    numbers=none,
-    stepnumber=1,
-    breaklines=true,
-    breakatwhitespace=true,
-    keepspaces=true,
-    tabsize=4,
-    showspaces=false,
-    showstringspaces=false,
-    extendedchars=\true,
-}
-
-\newcommand{\setupappendix}{
-  \setcounter{section}{1} % Сбрасываем счетчик разделов для приложений
-  \renewcommand{\thesection}{\Alph{section}} % Буквенная нумерация (А, Б, В...)
-
-  % Настройка отображения самого заголовка в тексте (по правому краю)
-  \titleformat{\section}[display]
-    {\normalfont\Large\bfseries\filleft}
-    {Приложение \thesection}
-    {10pt}
-    {\Large}
-}
+\documentclass[appendix_B]{subfiles}
 
 \begin{document}
-\setupappendix
-\section[Приложение \thesection]{Заголовочные файлы}
+\section*{Приложение B. Заголовочные файлы}
+\addcontentsline{toc}{section}{Приложение B. Заголовочные файлы}
 \begin{lstlisting}
 // Файл: ./src/main.cpp
 
@@ -393,4 +337,5 @@ class SimplexProviderFactory {
     static std::unique_ptr<ISimplexProvider> create(Type type, int dim = 0,
                                                     const std::string& filename = "");};
 \end{lstlisting}
+\newpage
 \end{document}
