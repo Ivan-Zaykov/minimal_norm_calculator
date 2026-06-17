@@ -1,0 +1,384 @@
+\documentclass{beamer}
+\usepackage[T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{booktabs}
+
+% Настройка темы оформления
+\usetheme{Madrid}
+\usecolortheme{default}
+
+% Настройка заголовка
+\title{Задача о минимальной норме интерполяционного проектора}
+\author{Зайков Иван Викторович}
+\institute{
+    Ярославский государственный университет им. П. Г. Демидова\\
+    Кафедра математического анализа
+    \and
+    Группа: ПМИ-21МО
+    \and
+    Научный руководитель: к.ф.-м.н., доцент Ухалов Алексей Юрьевич
+}
+\date{2026}
+
+\begin{document}
+\setbeamertemplate{footline}[frame number]
+
+% Титульный слайд
+\begin{frame}
+    \titlepage
+\end{frame}
+
+\begin{frame}{Постановка задачи}
+    \textbf{Интерполяция:} для функции $f(x)$ на кубе $Q_n = [0,1]^n$ строим линейный полином
+    \[
+    p(x) = a_1 x_1 + \dots + a_n x_n + b,
+    \]
+    совпадающий с $f$ в $n+1$ узле (вершинах симплекса $S$).
+
+    \vspace{0.3cm}
+
+    \textbf{Интерполяционный проектор} $P: C(Q_n) \to \Pi_1(\mathbb{R}^n)$
+
+    \vspace{0.3cm}
+
+    \textbf{Норма проектора (константа Лебега):}
+    \[
+    \|P\| = \max_{x \in \operatorname{ver}(Q_n)} \sum_{j=1}^{n+1} |\lambda_j(x)|,
+    \]
+    где $\lambda_j$ — базисные многочлены Лагранжа (барицентрические координаты).
+
+    \vspace{0.3cm}
+
+    \textbf{Цель:} используя симплекс максимального объёма, построенный из матрицы Адамара, получить верхнюю оценку минимальной нормы проектора $\theta_{31}$ в $\mathbb{R}^{31}$.
+\end{frame}
+
+% === 2. Используемые обозначения ===
+\begin{frame}{Обозначения}
+    \begin{itemize}
+        \item $Q_n = [0,1]^n$ — единичный куб
+        \item $C(Q_n)$ — пространство непрерывных функций с нормой $\|f\| = \max_{x \in Q_n} |f(x)|$
+        \item $\Pi_1(\mathbb{R}^n) = \operatorname{span}\{1, x_1, \dots, x_n\}$ — пространство полиномов от $n$ переменных степени $\le 1$
+        \item $S \subset Q_n$ — невырожденный симплекс (вершины $x^{(1)}, \dots, x^{(n+1)}$)
+    \end{itemize}
+\end{frame}
+
+% === 3. Интерполяционный проектор ===
+
+\subsection{Постановка задачи интерполяции} % (в презентации заголовок не нужен, просто для логики)
+
+\subsection{Базисные многочлены Лагранжа и барицентрические координаты}
+\begin{frame}{Базисные многочлены Лагранжа}
+    \textbf{Матрица $A$} (строки — вершины, последний столбец — единицы):
+    \[
+    A = \begin{pmatrix}
+    x_1^{(1)} & \dots & x_n^{(1)} & 1 \\
+    \vdots & & \vdots & \vdots \\
+    x_1^{(n+1)} & \dots & x_n^{(n+1)} & 1
+    \end{pmatrix}, \qquad \det A \neq 0
+    \]
+
+    \vspace{0.3cm}
+
+    $\Delta = \det(A)$, $\Delta_j(x)$ — замена $j$-й строки на $(x_1,\dots,x_n,1)$.
+
+    \vspace{0.3cm}
+
+    \textbf{Базисные многочлены Лагранжа:}
+    \[
+    \lambda_j(x) = \frac{\Delta_j(x)}{\Delta}
+    \]
+
+    \vspace{0.3cm}
+
+    \textbf{Через обратную матрицу:} $\lambda(x) = A^{-1} b(x)$, $b(x) = (x_1,\dots,x_n,1)^T$.
+
+    \vspace{0.3cm}
+
+    \textbf{Свойства:} $\lambda_j(x^{(k)}) = \delta_{jk}$, $\sum \lambda_j(x) = 1$.
+\end{frame}
+\subsection{Интерполяционный проектор}
+\begin{frame}{Интерполяционный проектор}
+    \textbf{Определение:} $P: C(Q_n) \to \Pi_1(\mathbb{R}^n)$, $P f(x^{(j)}) = f(x^{(j)})$, $j=1,\dots,n+1$.
+
+    \vspace{0.2cm}
+
+    \textbf{Формула Лагранжа:}
+    \[
+    P f(x) = \sum_{j=1}^{n+1} f(x^{(j)}) \lambda_j(x)
+    \]
+
+    \vspace{0.2cm}
+
+    \textbf{Норма:} $\displaystyle \|P\| = \max_{x \in \operatorname{ver}(Q_n)} \sum_{j=1}^{n+1} |\lambda_j(x)|$
+
+    \vspace{0.2cm}
+
+    \textbf{Минимальная норма:} $\theta_n = \min \|P\|$
+\end{frame}
+\subsection{Неравенство Лебега}  % (новый слайд)
+\begin{frame}{Неравенство Лебега}
+    Пусть $E_n(f)$ — наилучшее приближение функции $f$ полиномами из $\Pi_1(\mathbb{R}^n)$:
+    \[
+    E_n(f) = \min_{p \in \Pi_1(\mathbb{R}^n)} \|f - p\|_{C(Q_n)}.
+    \]
+
+    \vspace{0.3cm}
+
+    \textbf{Неравенство Лебега:}
+    \[
+    \|f - P f\|_{C(Q_n)} \le (1 + \|P\|) \cdot E_n(f).
+    \]
+
+    \vspace{0.3cm}
+
+    \textbf{Следствие:} чем меньше норма проектора $\|P\|$, тем ближе интерполяционный полином к наилучшему приближению.
+\end{frame}
+
+\subsection{Оценки нормы проектора}
+\begin{frame}{Общие оценки $\theta_n$}
+    \textbf{Неравенства:}
+    \[
+    \frac{1}{4}\sqrt{n} < \theta_n < 3\sqrt{n}, \qquad 3 - \frac{4}{n+1} \le \theta_n
+    \]
+
+    \vspace{0.3cm}
+
+    \textbf{Асимптотическая эквивалентность:}
+    \[
+    \|P\| \asymp \theta_n \quad\Leftrightarrow\quad c_1\sqrt{n} \le \theta_n \le c_2\sqrt{n}
+    \]
+
+    \vspace{0.3cm}
+
+    \textbf{Идея:} использовать симплекс максимального объёма для верхней оценки $\theta_n$.
+\end{frame}
+
+% === 4. Матрицы Адамара ===
+\subsection{Определение и основные свойства}
+\begin{frame}{Матрица Адамара}
+    \textbf{Определение:} $H$ — квадратная \textbf{$(-1/1)$-матрица} (элементы $\pm 1$), удовлетворяющая условию:
+    \[
+    H H^T = n I_n
+    \]
+
+    \vspace{0.3cm}
+
+    \textbf{Свойства:}
+    \begin{itemize}
+        \item $|\det H| = n^{n/2}$ — \textbf{максимальный определитель}
+        \item Существует при $n = 1, 2, 4k$ (гипотеза Адамара: для любого $n = 4k$)
+        \item Для порядка $32$: $13\,710\,027$ неэквивалентных матриц
+    \end{itemize}
+
+    \vspace{0.3cm}
+
+    \textbf{Построение (Сильвестр):}
+    \[
+    H_{1} = (1), \quad H_{2n} = \begin{pmatrix} H_n & H_n \\ H_n & -H_n \end{pmatrix}
+    \]
+
+    \vspace{0.3cm}
+
+    \textbf{Связь с симплексом:}
+    Матрица Адамара $H$ порядка $n+1$ даёт максимальный определитель $\det H = (n+1)^{(n+1)/2}$, который после преобразования становится максимальным $(0/1)$-определителем порядка $n$.
+\end{frame}
+
+\subsection{Методы построения матриц Адамара}
+% Метод Сильвестра (уже есть в слайде 6, можно оставить как есть или дублировать)
+
+\subsubsection{Способы построения матриц Адамара}
+\begin{frame}{Типы матриц Адамара порядка 32}
+    \begin{itemize}
+        \item \texttt{syl} — метод Сильвестра
+        \item \texttt{pal} — метод Пэли (на основе конечных полей)
+        \item \texttt{t1}, \texttt{t2}, \texttt{t3}, \texttt{t4} — метод тензорного произведения
+    \end{itemize}
+
+    \vspace{0.3cm}
+
+    Шесть матриц, построенных указанными способами, взяты из библиотеки Нила Слоуна (доступна по адресу \url{https://neilsloane.com/hadamard/}).
+\end{frame}
+
+
+\subsection{Количество неэквивалентных матриц Адамара} % (новый слайд)
+\begin{frame}{Количество матриц Адамара}
+    \begin{table}
+    \centering
+    \begin{tabular}{c|c}
+    \hline
+    Порядок $n$ & Количество неэквивалентных матриц \\
+    \hline
+    1, 2, 4, 8, 12 & 1 \\
+    16 & 5 \\
+    20 & 3 \\
+    24 & 60 \\
+    28 & 487 \\
+    32 & $13\,710\,027$ \\
+    \hline
+    \end{tabular}
+    \end{table}
+
+    \vspace{0.3cm}
+
+    Ввиду огромного числа матриц Адамара порядка $32$ (более $13$ миллионов) полный перебор всех возможных симплексов не проводился. Исследование ограничено шестью представителями вышеуказанных типов.
+\end{frame}
+
+\subsection{Переход к (0/1)-матрицам и построение симплекса}
+\begin{frame}{Построение симплекса}
+    \textbf{Исходные данные:} матрица Адамара $H$ порядка $32$ (элементы $\pm 1$).
+
+    \vspace{0.3cm}
+
+    \textbf{Шаги:}
+    \begin{enumerate}
+        \item Приводим $H$ к виду $B$, где первый столбец и первая строка состоят из единиц (умножением строк/столбцов на $-1$).
+        \item Удаляем первую строку и первый столбец → матрица $C$ порядка $31$.
+        \item Заменяем элементы: $-1 \to 1$, $1 \to 0$ → получаем $(0/1)$-матрицу $D$ порядка $31$.
+        \item Добавляем нулевую строку (вершину) → $32$ вершины в $\mathbb{R}^{31}$.
+    \end{enumerate}
+
+    \vspace{0.3cm}
+
+    \textbf{Результат:} $V = \{0, \operatorname{row}_1(D), \dots, \operatorname{row}_{31}(D)\} \subset [0,1]^{31}$ — симплекс максимального объёма.
+\end{frame}
+
+% === 5. Описание программной реализации ===
+\subsection{Общая архитектура} % (в презентации слайд "Программная реализация" должен объединять несколько подразделов)
+\begin{frame}{Программная реализация (1/2)}
+    \textbf{Основные классы:}
+    \begin{itemize}
+        \item `ISimplexProvider` — интерфейс для получения вершин симплекса
+        \item `SilvesterMethodProvider`, `HadamardFileProvider` — реализация
+        \item `FullEnumUpperBoundCalculator` — многопоточный перебор вершин
+        \item `LebesgueFunction` — вычисление суммы модулей
+        \item `HadamardMatrixIterator` — чтение матриц из файла
+    \end{itemize}
+    \textbf{Технологии:} C++17, Eigen, CMake, многопоточность (атомарные операции).
+\end{frame}
+
+\subsection{Ввод и вывод данных}
+\begin{frame}{Программная реализация (2/2)}
+    \textbf{Режимы работы:}
+    \begin{itemize}
+        \item Построение симплекса по Сильвестру
+        \item Загрузка матриц Адамара из файла
+    \end{itemize}
+
+    \textbf{Параметры командной строки:}
+    \begin{itemize}
+        \item \texttt{--dimension N} — размерность пространства $\mathbb{R}^N$
+        \item \texttt{--load-hadamard FILE} — загрузить матрицу Адамара из файла
+        \item \texttt{--threads N} — количество потоков
+        \item \texttt{--range START END} — частичный перебор вершин в диапазоне $[\text{START}, \text{END})$ (для распределения вычислений)
+    \end{itemize}
+\end{frame}
+
+\subsection{Вычисление нормы проектора}
+\begin{frame}{Полный перебор}
+    \textbf{Число вершин гиперкуба $Q_{31}$:}
+    \[
+    N = 2^{31} = 2\,147\,483\,648
+    \]
+
+    \vspace{0.3cm}
+
+    \textbf{Особенности реализации:}
+    \begin{itemize}
+        \item Кодирование вершины 31-битовым целым числом
+        \item Многопоточность (16 потоков)
+        \item Атомарные операции для синхронизации
+        \item Логирование каждые $10^7$ вершин
+    \end{itemize}
+
+    \vspace{0.3cm}
+
+    \[
+    \theta_{31} = \max_{x \in \{0,1\}^{31}} \sum_{j=1}^{32} |\lambda_j(x)|
+    \]
+\end{frame}
+
+% === 6. Результаты вычисления ===
+\subsection{Параметры вычислительного эксперимента}
+\begin{frame}{Параметры вычислительной системы}
+    \textbf{Аппаратное обеспечение:}
+    \begin{table}
+    \centering
+    \begin{tabular}{l|c}
+    \hline
+    \textbf{Параметр} & \textbf{Значение} \\
+    \hline
+    Процессор & Intel Core i5-1240P (12-го поколения) \\
+    Ядра (потоки) & 16 \\
+    Оперативная память & 15 ГБ \\
+    \hline
+    \end{tabular}
+    \end{table}
+
+    \vspace{0.5cm}
+
+    \textbf{Программное обеспечение:}
+    \begin{table}
+    \centering
+    \begin{tabular}{l|c}
+    \hline
+    \textbf{Параметр} & \textbf{Значение} \\
+    \hline
+    Операционная система & Ubuntu 24.04.3 LTS \\
+    Компилятор & GCC 13.3.0 \\
+    Библиотека & Eigen 3 \\
+    Количество потоков & 16 \\
+    \hline
+    \end{tabular}
+    \end{table}
+\end{frame}
+
+\subsection{Результаты и сравнение с теоретической оценкой}
+\begin{frame}{Результаты}
+    \textbf{Полученное значение:}
+    \[
+    \boxed{\theta_{31} \le 5.000}
+    \]
+
+    \vspace{0.5cm}
+
+    \begin{table}
+    \centering
+    \begin{tabular}{l|c}
+    \hline
+    \textbf{Параметр} & \textbf{Значение} \\
+    \hline
+    Теоретическая оценка & $\sqrt{32} \approx 5.656854$ \\
+    Экспериментальное значение & $5.000$ \\
+    Время выполнения & $290$ секунд ($\approx 5$ мин) \\
+    Скорость обработки & $\approx 7.4 \times 10^6$ вершин/сек \\
+    \hline
+    \end{tabular}
+    \end{table}
+
+    \vspace{0.3cm}
+\end{frame}
+
+% === Заключение ===
+\begin{frame}{Заключение}
+    \textbf{Выполнено:}
+    \begin{enumerate}
+        \item Построен симплекс максимального объёма в $\mathbb{R}^{31}$ на основе матрицы Адамара
+        \item Реализован многопоточный полный перебор $2^{31}$ вершин гиперкуба
+        \item Получена верхняя оценка $\theta_{31} \le 5.000$
+    \end{enumerate}
+
+    \vspace{0.5cm}
+\end{frame}
+
+% === Спасибо за внимание ===
+\begin{frame}
+    \centering
+    \Huge \textcolor{blue}{Спасибо за внимание!}
+
+    \vspace{0.5cm}
+\end{frame}
+\end{document}
